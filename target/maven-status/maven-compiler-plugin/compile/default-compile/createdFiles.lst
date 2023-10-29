@@ -1,0 +1,17 @@
+model\GameInfo.class
+view\ClockGraphic.class
+model\ModelMain.class
+view\BoardOverlayGraphic.class
+base\Launcher.class
+controller\ControllerMain.class
+helper\FEN.class
+helper\Vec3.class
+model\Position.class
+view\BoardGraphic.class
+helper\Vec4.class
+view\UserInterface.class
+helper\Vec2.class
+base\App.class
+view\PieceGraphic.class
+view\ViewMain.class
+controller\BoardOverlay.class
