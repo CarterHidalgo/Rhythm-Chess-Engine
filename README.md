@@ -7,8 +7,8 @@ This is a simple chess application built using Java with Maven and JavaFX. The a
 - Apache Maven installed to build and run the project.
 
 ## Getting Started
-1. Clone the repository to your local machine: `git clone <repository-url>`
-2. Navigate to the project directory: `CH__ChessBot__JavaWithMaven`
+1. Clone the repository to your local machine: `git clone https://github.com/CarterHidalgo/CH__ChessBot__Java.git`
+2. Navigate to the project directory: `CH__ChessBot__Java`
 3. Build the project using Maven: `mvn clean install`
 4. Run the application: `mvn javafx:run`
 

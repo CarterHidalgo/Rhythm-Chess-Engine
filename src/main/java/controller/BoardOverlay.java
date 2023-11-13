@@ -1,30 +1,32 @@
 package controller;
 
-import view.BoardOverlayGraphic;
 import javafx.scene.canvas.Canvas;
+import model.GameInfo;
+import view.board.BoardOverlayGraphic;
 
 public class BoardOverlay {
-    private final int BOARD_LENGTH = 800;
+    private static Canvas overlayCatch = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());
 
-    private Canvas overlayCatch = new Canvas(BOARD_LENGTH, BOARD_LENGTH);
-
-    public Canvas getBoardOverlayEventCanvas() {
+    public static Canvas getBoardOverlayEventCanvas() {
         return overlayCatch;
     }
 
-    public void setupOverlayMouseEvent(BoardOverlayGraphic overlayGraphic) {
-        overlayCatch.setOnMouseClicked(event -> {
-            // System.out.println("clicked");
-        });
-
-        overlayCatch.setOnMouseDragged(event -> {
-            // System.out.println("dragged");
-        });
-
+    public static void setupOverlayMouseEvent(BoardOverlayGraphic overlayGraphic) {
         overlayCatch.setOnMousePressed(event -> {
-            // System.out.println("pressed");
-            // check if conditions are right to draw a highlight
-            overlayGraphic.drawHighlightSquare(event.getX(), event.getY());
+            BoardMouseHandler.handleMousePressed(event.getX(), event.getY());
         });
+        
+        overlayCatch.setOnMouseDragged(event -> {
+            BoardMouseHandler.handleMouseDragged(event.getX(), event.getY());
+        });
+
+        overlayCatch.setOnMouseReleased(event -> {
+            BoardMouseHandler.handleMouseReleased(event.getX(), event.getY());
+        });
+
+        overlayCatch.setOnMouseClicked(event -> {
+            BoardMouseHandler.handleMouseClicked(event.getX(), event.getY());
+        });
+
     }
 }

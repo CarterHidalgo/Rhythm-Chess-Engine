@@ -4,17 +4,18 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import view.board.BoardGraphic;
+import view.ui.UserInterface;
 
 public class ViewMain {
-    private final int APP_WIDTH = 1200;
-    private final int APP_HEIGHT = 800;
+    private static final int APP_WIDTH = 1200;
+    private static final int APP_HEIGHT = 800;
 
-    private HBox root = new HBox();
-    private BoardGraphic board = new BoardGraphic();
-    private UserInterface ui = new UserInterface();
+    private static HBox root = new HBox();
+    private static UserInterface ui = new UserInterface();
 
-    public Scene initView() {
-        StackPane boardStack = board.getFullBoardStack();
+    public static Scene initView() {
+        StackPane boardStack = BoardGraphic.getFullBoardStack();
         Canvas uiCanvas = ui.getUICanvas();
         
         root.getChildren().addAll(boardStack, uiCanvas);

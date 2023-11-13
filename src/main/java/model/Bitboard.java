@@ -1,0 +1,174 @@
+package model;
+
+import java.util.HashMap;
+
+import helper.Debug;
+import helper.Printer;
+
+public class Bitboard {
+    public static String[] keys = {
+        "whitePawn",
+        "whiteKnight",
+        "whiteBishop",
+        "whiteRook",
+        "whiteQueen",
+        "whiteKing",
+
+        "blackPawn",
+        "blackKnight",
+        "blackBishop",
+        "blackRook",
+        "blackQueen",
+        "blackKing",
+    };
+    private static int startWhiteKey = 0;
+    private static int stopWhiteKey = 6;
+    private static int startBlackKey = 6;
+    private static int stopBlackKey = 12;
+
+    private static HashMap<String, Long> bitboard = new HashMap<>();
+
+    public static void initBitboards() {
+        if(GameInfo.getSide() == 0) {
+            bitboard.put("whitePawn", 0xFF00L);
+            bitboard.put("whiteKnight", 0x42L);
+            bitboard.put("whiteBishop", 0x24L);
+            bitboard.put("whiteRook", 0x81L);
+            bitboard.put("whiteQueen", 0x8L);
+            bitboard.put("whiteKing", 0x10L);
+            bitboard.put("white", 0xFFFFL);
+
+            bitboard.put("blackPawn", 0xFF000000000000L);
+            bitboard.put("blackKnight", 0x4200000000000000L);
+            bitboard.put("blackBishop", 0x2400000000000000L);
+            bitboard.put("blackRook", 0x8100000000000000L);
+            bitboard.put("blackQueen", 0x800000000000000L);
+            bitboard.put("blackKing", 0x1000000000000000L);
+            bitboard.put("black", 0xFFFF000000000000L);
+        } else {
+            bitboard.put("blackPawn", 0xFF00L);
+            bitboard.put("blackKnight", 0x42L);
+            bitboard.put("blackBishop", 0x24L);
+            bitboard.put("blackRook", 0x81L);
+            bitboard.put("blackKing", 0x10L);
+            bitboard.put("blackQueen", 0x8L);
+            bitboard.put("black", 0xFFFFL);
+
+            bitboard.put("whitePawn", 0xFF000000000000L);
+            bitboard.put("whiteKnight", 0x4200000000000000L);
+            bitboard.put("whiteBishop", 0x2400000000000000L);
+            bitboard.put("whiteRook", 0x8100000000000000L);
+            bitboard.put("whiteQueen", 0x800000000000000L);
+            bitboard.put("whiteKing", 0x1000000000000000L);
+            bitboard.put("white", 0xFFFF000000000000L);
+        }
+
+        bitboard.put("occupied", 0xFFFF00000000FFFFL);
+
+        if(Debug.on("A1")) {
+            Printer.print("\n >> Printing all initialized bitboards as squares");
+            Printer.printAllBitboards();
+            Printer.print("\n >> Successfully printed all initialized bitboards as squares");
+        }
+
+        if(Debug.on("A2")) {
+            Printer.print("\n >> Printing all initialized bitboards as lines (LSB)");
+            Printer.printAllBitboardsAsLines();
+            Printer.print("\n >> Successfully printed all initialized bitboards as lines (LSB)");
+        }
+    };
+
+    public static long getBitboard(String key) {
+        return bitboard.get(key);
+    }
+
+    public static int getPieceIDFromKey(String key) {
+        String[] words = splitCamelCase(key);
+
+        int ID = 0;
+
+        if(words[0].equals("white")) {
+            ID += 8;
+        } else {
+            ID += 16;
+        }
+
+        switch(words[1]) {
+            case "Pawn":
+                ID += 6;
+            break;
+            case "Knight":
+                ID += 4;
+            break;
+            case "Bishop":
+                ID += 3;
+            break;
+            case "Rook":
+                ID += 5;
+            break;
+            case "Queen":
+                ID += 2;
+            break;
+            case "King":
+                ID += 1;
+            break;
+            default:
+                System.out.println("Error in getPieceIDFromKey() in model.Bitboard.java");
+                return -1;
+        }
+
+        return ID;
+    }
+
+    public static String getKeyFromBitIndex(int bitIndex) {
+        long bitmask = 1L << bitIndex;
+
+        if((bitmask & bitboard.get("white")) != 0) {
+            for(int i = startWhiteKey; i < stopWhiteKey; i++) {
+                if((bitmask & bitboard.get(keys[i])) != 0) {
+                    return keys[i];
+                }
+            }
+        } else {
+            for(int i = startBlackKey; i < stopBlackKey; i++) {
+                if((bitmask & bitboard.get(keys[i])) != 0) {
+                    return keys[i];
+                }
+            }
+        }
+
+        return "NaN";
+    }
+
+    public static void updateWithMove(Move move) {
+        if(move.getToIndex() < 0 || move.getToIndex() > 63) {
+            return;
+        }
+
+        if((bitboard.get("occupied") & (1L << move.getToIndex())) != 0) {
+            // the square is occupied
+        } else {
+            updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex());
+            updateBitboard((GameInfo.getTurn() == 0) ? "white" : "black", move.getFromIndex(), move.getToIndex());
+            updateBitboard("occupied", move.getFromIndex(), move.getToIndex());
+        }
+    }
+
+    private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {
+        bitboard.put(key, bitboard.get(key) & ~(1L << bitIndexToRemove));
+        bitboard.put(key, bitboard.get(key) | (1L << bitIndexToAdd));
+    }
+
+    private static String[] splitCamelCase(String camelCaseString) {
+        int index = 0;
+        while (index < camelCaseString.length() && !Character.isUpperCase(camelCaseString.charAt(index))) {
+            index++;
+        }
+
+        String[] words = new String[2];
+        words[0] = camelCaseString.substring(0, index);
+        words[1] = camelCaseString.substring(index);
+
+        return words;
+    }
+}

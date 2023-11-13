@@ -1,7 +1,7 @@
 package helper;
 
 public class FEN {
-    public int charToPieceID(char c) {
+    public static int charToPieceID(char c) {
         int ID = 0;
 
         if(Character.isUpperCase(c)) {
