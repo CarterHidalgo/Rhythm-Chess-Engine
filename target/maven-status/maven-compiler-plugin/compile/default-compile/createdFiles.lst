@@ -2,7 +2,9 @@ model\GameInfo.class
 view\ui\ClockGraphic.class
 controller\ControllerMain.class
 helper\Vec3.class
+view\board\BitboardGraphic.class
 helper\Debug.class
+helper\Convert.class
 view\ViewMain.class
 model\ModelMain.class
 base\Launcher.class
@@ -11,6 +13,7 @@ view\board\BoardGraphic.class
 helper\Printer.class
 helper\FEN.class
 model\Bitboard.class
+model\Move.class
 controller\BoardMouseHandler.class
 helper\Vec4.class
 helper\Vec2.class
