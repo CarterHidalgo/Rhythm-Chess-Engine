@@ -13,7 +13,6 @@ import view.board.BoardOverlayGraphic;
 import view.board.HighPieceGraphic;
 
 public class BoardMouseHandler {
-
     public static void handleMousePressed(double mouseX, double mouseY) {
         if(isOverHomePiece(mouseX, mouseY)) {
             int bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
@@ -27,7 +26,7 @@ public class BoardMouseHandler {
         } else if(mouseX == -1) {
             
         } else {
-            BoardOverlayGraphic.safeClear();
+            BoardOverlayGraphic.resetOverlayCanvas();
         }
     }
 
@@ -42,12 +41,16 @@ public class BoardMouseHandler {
         GameInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
 
         if(!GameInfo.getPieceSelected().equals("none")) {
-            Move offeredMove = new Move(GameInfo.getPieceSelected(), GameInfo.getFromIndex(), GameInfo.getToIndex());
+            Move offeredMove = new Move(GameInfo.getPieceSelected(), GameInfo.getFromIndex(), GameInfo.getToIndex(), GameInfo.getSideToPlay());
 
-            if(offeredMove.isLegal()) {
+            if(offeredMove.isValid()) {
                 Bitboard.updateWithMove(offeredMove);
                 BoardOverlayGraphic.highlightMove(offeredMove);
                 GameInfo.nextTurn();
+            } else {
+                if(GameInfo.getFromIndex() != GameInfo.getToIndex()) {
+                    BoardOverlayGraphic.resetOverlayCanvas();
+                }
             }
             
             BoardGraphic.drawBoardGraphicByBitboard();

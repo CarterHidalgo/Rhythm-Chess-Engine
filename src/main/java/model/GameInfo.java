@@ -8,6 +8,7 @@ public class GameInfo {
     private static int toIndex = -1;
 
     private static int turn = 0;
+    private static int move = 0;
     private static int side = 0;
 
     private static final int BOARD_LENGTH = 800;
@@ -24,6 +25,7 @@ public class GameInfo {
 
     public static void nextTurn() {
         turn ^= 1;
+        addMove();
     }
 
     public static void setSide(int newSide) {
@@ -76,5 +78,29 @@ public class GameInfo {
 
     public static int getToIndex() {
         return toIndex;
+    }
+
+    public static void addMove() {
+        move++;
+    }
+
+    public static int getMove() {
+        return move;
+    }
+
+    public static String getSideToPlay() {
+        if(turn == 0) {
+            return "white";
+        } else {
+            return "black";
+        }
+    }
+
+    public static String getSideToWait() {
+        if(turn == 0) {
+            return "black";
+        } else {
+            return "white";
+        }
     }
 }

@@ -11,7 +11,7 @@ public class UserInterface {
     private Canvas uiCanvas = new Canvas(UI_WIDTH, UI_HEIGHT);
     private GraphicsContext gc = uiCanvas.getGraphicsContext2D();
 
-    private Color backgroundColor = Color.rgb(56, 52, 60);
+    private Color backgroundColor = Color.rgb(49, 51, 56);
 
     public Canvas getUICanvas() {
         gc.setFill(backgroundColor);

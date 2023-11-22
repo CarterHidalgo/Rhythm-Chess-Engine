@@ -1,0 +1,39 @@
+Thingz to conisder
+
+1. King safety
+Even through blocking pieces (having pawns in 6 squares in the corner) 
+Oponent pieces inline to next to the king
+
+2. Controling important squares
+
+3. Number of pieces (duh) 
+
+
+Dynamic vs Static
+Dynamic: 
+Static: Pawns protecting each other or being protected (not about to fall apart) 
+Active piece: a piece that is controling more squares and is well positioned 
+
+How many pieces are protecting each other (and protecting and attacking bitboards to see if there are any pieces that are hanging)
+Protect or move - increase depth to make sure no negative countermoves
+
+
+Knights on the rim are dim
+Pawn pushing too far (controlled squares!) 
+Controlling squares in the center or more advanced (per side) unless
+the king is nearby 
+
+Controling a square:
+1. Having a pawn protecting the square (opponent pawn pushed too far) 
+2. A square is controlled until it isn't (supported pawns/pieces) 
+
+Relative piece value is dependent on number of controled squares and
+what is on. Move *bishops* to places that control more squares and are importantly
+not blocked by their own pawns 
+Bishops should not stare at their own pawns or knights within 3 spaces or protected 
+enemy pawns - dependent on the bishop not the pawns 
+
+Rooks like open files and to be connected (middle game) not blocked by their own pawns 
+10 or fewer non-pawn/king pieces means an endgame just for the other side 
+Active king in an endgame 
+8 moves is the end of the opening and the beginning of the mid-game 

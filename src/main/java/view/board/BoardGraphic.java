@@ -36,6 +36,7 @@ public class BoardGraphic {
             PieceGraphic.getPieceCanvas(), 
             HighPieceGraphic.getPieceCanvas(),
             BitboardGraphic.getBoardOverlayCanvas(),
+            PromotionGraphic.getPromotionCanvas(),
             BoardOverlay.getBoardOverlayEventCanvas()
         );
         BoardOverlay.setupOverlayMouseEvent(overlayGraphic);

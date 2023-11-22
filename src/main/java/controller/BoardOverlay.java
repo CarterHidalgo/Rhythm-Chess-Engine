@@ -12,6 +12,10 @@ public class BoardOverlay {
     }
 
     public static void setupOverlayMouseEvent(BoardOverlayGraphic overlayGraphic) {
+        // overlayCatch.setOnMouseMoved(event -> {
+        //     System.out.println("mouse moved");
+        // });
+
         overlayCatch.setOnMousePressed(event -> {
             BoardMouseHandler.handleMousePressed(event.getX(), event.getY());
         });

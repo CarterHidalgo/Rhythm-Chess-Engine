@@ -1,10 +1,12 @@
 model\GameInfo.class
+model\MoveValidation.class
 view\ui\ClockGraphic.class
 controller\ControllerMain.class
 helper\Vec3.class
 view\board\BitboardGraphic.class
 helper\Debug.class
 helper\Convert.class
+model\EnPassantSquares.class
 view\ViewMain.class
 model\ModelMain.class
 base\Launcher.class

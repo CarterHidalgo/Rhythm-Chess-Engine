@@ -2,6 +2,7 @@ package model;
 
 import java.util.HashMap;
 
+import helper.Convert;
 import helper.Debug;
 import helper.Printer;
 
@@ -64,6 +65,11 @@ public class Bitboard {
         }
 
         bitboard.put("occupied", 0xFFFF00000000FFFFL);
+
+        bitboard.put("whitePawnStart", 0xff00L);
+        bitboard.put("blackPawnStart", 0xff000000000000L);
+        bitboard.put("whitePromotion", 0xff00000000000000L);
+        bitboard.put("blackPromotion", 0xffL);
 
         if(Debug.on("A1")) {
             Printer.print("\n >> Printing all initialized bitboards as squares");
@@ -137,27 +143,44 @@ public class Bitboard {
             }
         }
 
+        System.out.println("Error in Bitboard.java -> getKeyFromBitIndex(int bitIndex): Should have returned a value");
+        System.exit(1);
+        
         return "NaN";
     }
 
     public static void updateWithMove(Move move) {
-        if(move.getToIndex() < 0 || move.getToIndex() > 63) {
-            return;
-        }
+        if(move.isEnPassant()) {
+            removeFromBitboard(GameInfo.getSideToWait(), Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
+            removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
+            removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
+        } else if(move.isPromotion()) {
+            // TODO: promotion logic
+            // pause all game interaction until a promotion square has been selected
+            
 
-        if((bitboard.get("occupied") & (1L << move.getToIndex())) != 0) {
-            // the square is occupied
-        } else {
-            updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex());
-            updateBitboard((GameInfo.getTurn() == 0) ? "white" : "black", move.getFromIndex(), move.getToIndex());
-            updateBitboard("occupied", move.getFromIndex(), move.getToIndex());
+        } else if(move.isCapture()) {
+            removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex());
+            removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex());
         }
+        
+        updateBitboard("occupied", move.getFromIndex(), move.getToIndex());
+        updateBitboard(GameInfo.getSideToPlay(), move.getFromIndex(), move.getToIndex());
+        updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex());
     }
 
     private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {
         bitboard.put(key, bitboard.get(key) & ~(1L << bitIndexToRemove));
         bitboard.put(key, bitboard.get(key) | (1L << bitIndexToAdd));
     }
+
+    private static void removeFromBitboard(String key, int bitIndexToRemove) {
+        bitboard.put(key, bitboard.get(key) & ~(1L << bitIndexToRemove));
+    }
+
+    // private static void addToBitboard(String key, int bitIndexToAdd) {
+    //     bitboard.put(key, bitboard.get(key) | (1L << bitIndexToAdd));
+    // }
 
     private static String[] splitCamelCase(String camelCaseString) {
         int index = 0;

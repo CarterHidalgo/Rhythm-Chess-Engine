@@ -34,7 +34,6 @@ public class BoardOverlayGraphic {
         }
 
         highlightIndex = Convert.mouseToBitIndex(mouseX, mouseY);
-        
         safeClear();
         highlightCorner = Convert.mouseToCorner(mouseX, mouseY);
 
@@ -71,22 +70,18 @@ public class BoardOverlayGraphic {
             GameInfo.getSquareLength()
         );
     }
-    
-    public static void resetOverlayCanvas() {
-        if(highlightCorner == null) {
-            return;
-        }
-
-        clearHighlightSquare();
-        clickCount = 0;
-    }
 
     public static void safeClear() {
         clearOverlayCanvas();
         highlightMove();
     }
 
-    private static void clearOverlayCanvas() {
+    public static void resetOverlayCanvas() {
+        safeClear();
+        clickCount = 0;
+    }
+
+    public static void clearOverlayCanvas() {
         overlayContext.clearRect(0, 0, GameInfo.getBoardLength(), GameInfo.getBoardLength());
     }
     
