@@ -1,11 +1,12 @@
 package view.board;
 
 import helper.Vec2;
-import controller.BoardOverlay;
+import controller.BoardCatch;
 import helper.Convert;
 import helper.FEN;
 import model.Bitboard;
 import model.GameInfo;
+import model.Promotion;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -37,9 +38,9 @@ public class BoardGraphic {
             HighPieceGraphic.getPieceCanvas(),
             BitboardGraphic.getBoardOverlayCanvas(),
             PromotionGraphic.getPromotionCanvas(),
-            BoardOverlay.getBoardOverlayEventCanvas()
+            BoardCatch.getBoardOverlayEventCanvas()
         );
-        BoardOverlay.setupOverlayMouseEvent(overlayGraphic);
+        BoardCatch.setupCatchMouseEvent();
 
         return boardStack;
     }

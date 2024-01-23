@@ -1,39 +1,56 @@
-Thingz to conisder
+>> ChessBot Strategy Checklist <<
 
-1. King safety
-Even through blocking pieces (having pawns in 6 squares in the corner) 
-Oponent pieces inline to next to the king
+King safety
+    A king that is being attacked or is in an attack neighborhood 
+    even through blocking pieces is less safe than
+    one which is not. A king that is behind its own pieces (has protection in the
+    squares in front of it in the corner) is more safe. 
 
-2. Controling important squares
+Controling important squares
+    Controling a square:
+    Having a pawn protecting the square (opponent pawn pushed too far) 
+    A square is controlled until it isn't (supported pawns/pieces) 
+    A square is more tightly controlled if the opponent pawns which would have protected it have been pushed 
+    Controlling squares in the center or squares which are more advanced unless the king is nearby
+    Control squares that are near the king (lowers opponent king safety) 
 
-3. Number of pieces (duh) 
+Number of pieces
+    Pawn: 1
+    Knight: 3
+    Bishop: 3/3.5
+    Rook: 5
+    Queen: 9
+    King: 0 or infinite
+
+Dynamic vs Static and Active Pieces
+    Dynamic: More active pieces than non active pieces
+    Static: Pawns protecting each other or being protected (strong pawn structure that is not about to fall apart) 
+    Active piece: a piece that is controling more squares and is well positioned 
+
+Piece Protection
+    How many pieces are protecting each other (make sure there are no hanging pieces)
+    Better to have strong interconnected pieces re-enforcing each other than not
+    Protect or move unprotected piece - increase depth to make sure no negative countermoves (protecting
+    one minor piece leads to a dead lost position)
 
 
-Dynamic vs Static
-Dynamic: 
-Static: Pawns protecting each other or being protected (not about to fall apart) 
-Active piece: a piece that is controling more squares and is well positioned 
+Relative Piece Value
+    "Knights on the rim are dim"
+    
+    Relative piece value is dependent on the number of squares that piece controls and what 
+    square that piece is on. 
 
-How many pieces are protecting each other (and protecting and attacking bitboards to see if there are any pieces that are hanging)
-Protect or move - increase depth to make sure no negative countermoves
+    Bishops: Move bishops to places that control more squares and are importantly
+    not blocked by their own pawns 
+    Bishops should not stare at their own pawns or knights within 3 spaces or protected 
+    enemy pawns - this is dependent on the bishop not the pawns 
+    
+    Rooks like open files and to be connected (in the middle game or later) and should not blocked by their own pawns 
 
+Opening/Midgame/Endgame
+    If the opponent has 10 or fewer non-pawn/king pieces this means you are in an endgame 
+    You want to have an active king in an endgame (see prior definition of active) 
+    ~8 moves is the end of the opening and the beginning of the mid-game 
 
-Knights on the rim are dim
-Pawn pushing too far (controlled squares!) 
-Controlling squares in the center or more advanced (per side) unless
-the king is nearby 
-
-Controling a square:
-1. Having a pawn protecting the square (opponent pawn pushed too far) 
-2. A square is controlled until it isn't (supported pawns/pieces) 
-
-Relative piece value is dependent on number of controled squares and
-what is on. Move *bishops* to places that control more squares and are importantly
-not blocked by their own pawns 
-Bishops should not stare at their own pawns or knights within 3 spaces or protected 
-enemy pawns - dependent on the bishop not the pawns 
-
-Rooks like open files and to be connected (middle game) not blocked by their own pawns 
-10 or fewer non-pawn/king pieces means an endgame just for the other side 
-Active king in an endgame 
-8 moves is the end of the opening and the beginning of the mid-game 
+Move
+    A move is defined as 1 move for white and 1 move for black

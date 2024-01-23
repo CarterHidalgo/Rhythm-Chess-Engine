@@ -2,20 +2,15 @@ package controller;
 
 import javafx.scene.canvas.Canvas;
 import model.GameInfo;
-import view.board.BoardOverlayGraphic;
 
-public class BoardOverlay {
+public class BoardCatch {
     private static Canvas overlayCatch = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());
 
     public static Canvas getBoardOverlayEventCanvas() {
         return overlayCatch;
     }
 
-    public static void setupOverlayMouseEvent(BoardOverlayGraphic overlayGraphic) {
-        // overlayCatch.setOnMouseMoved(event -> {
-        //     System.out.println("mouse moved");
-        // });
-
+    public static void setupCatchMouseEvent() {
         overlayCatch.setOnMousePressed(event -> {
             BoardMouseHandler.handleMousePressed(event.getX(), event.getY());
         });
@@ -32,5 +27,8 @@ public class BoardOverlay {
             BoardMouseHandler.handleMouseClicked(event.getX(), event.getY());
         });
 
+        overlayCatch.setOnMouseMoved(event -> {
+            BoardMouseHandler.handleMouseMoved(event.getX(), event.getY());
+        });
     }
 }

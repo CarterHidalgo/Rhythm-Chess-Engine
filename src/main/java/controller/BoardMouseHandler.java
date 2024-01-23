@@ -2,6 +2,7 @@ package controller;
 
 import model.GameInfo;
 import model.Move;
+import model.Promotion;
 import model.Bitboard;
 import helper.Convert;
 import helper.Debug;
@@ -14,6 +15,12 @@ import view.board.HighPieceGraphic;
 
 public class BoardMouseHandler {
     public static void handleMousePressed(double mouseX, double mouseY) {
+        if(Promotion.isActive()) {
+            
+            
+            return;
+        }
+        
         if(isOverHomePiece(mouseX, mouseY)) {
             int bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
             GameInfo.setPieceSelected(Bitboard.getKeyFromBitIndex(bitIndex));
@@ -65,6 +72,12 @@ public class BoardMouseHandler {
 
     public static void handleMouseClicked(double mouseX, double mouseY) {
         // TO-DO: implement clicking (probably) for UI
+    }
+
+    public static void handleMouseMoved(double mouseX, double mouseY) {
+        if(Promotion.isActive()) {
+            
+        }
     }
 
     private static boolean isOverHomePiece(double mouseX, double mouseY) {

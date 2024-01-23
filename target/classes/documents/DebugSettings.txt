@@ -14,4 +14,4 @@ B6. Print a message if the clicked square holds a home color piece: false
 
 >> Bitboard Graphics
 
-C1. Show bitboard highlights for the clicked piece (in yellow): false
+C1. Show bitboard highlights for the clicked piece (in yellow): true

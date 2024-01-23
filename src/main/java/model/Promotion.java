@@ -1,5 +1,7 @@
 package model;
 
+import view.board.BoardOverlayGraphic;
+
 public class Promotion {
     private static boolean active = false;
 
@@ -9,5 +11,11 @@ public class Promotion {
 
     public static boolean isActive() {
         return active;
+    }
+
+    public static void initPromotion() {
+        active = true;
+        BoardOverlayGraphic.clearOverlayCanvas();
+        // draw promotion graphic thingy
     }
 }

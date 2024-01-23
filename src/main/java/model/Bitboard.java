@@ -155,10 +155,7 @@ public class Bitboard {
             removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
             removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
         } else if(move.isPromotion()) {
-            // TODO: promotion logic
-            // pause all game interaction until a promotion square has been selected
-            
-
+            Promotion.initPromotion();
         } else if(move.isCapture()) {
             removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex());
             removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex());
