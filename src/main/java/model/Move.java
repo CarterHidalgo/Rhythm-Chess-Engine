@@ -8,6 +8,8 @@ public class Move {
     private boolean capture = false;
     private boolean enPassant = false;
     private boolean promotion = false;
+    private String promotionSelected = "none";
+    private String pieceCaptured = "none";
     private String player;
 
     public Move(String pieceSelected, int fromIndex, int toIndex, String player) {
@@ -47,6 +49,14 @@ public class Move {
         return capture;
     }
 
+    public void setPieceCaptured(String set) {
+        pieceCaptured = set;
+    }
+
+    public String getPieceCaptured() {
+        return pieceCaptured;
+    }
+
     public void setEnPassant() {
         enPassant = true;
         capture = true;
@@ -64,11 +74,60 @@ public class Move {
         return promotion;
     }
 
+    public String getPromotionSelected() {
+        return promotionSelected;
+    }
+
+    public void setPromotionSelected(int section) {
+        switch(section) {
+            case 0:
+                promotionSelected = "Queen";
+            break;
+            case 1:
+                promotionSelected = "Knight";
+            break;
+            case 2: 
+                promotionSelected = "Rook";
+            break;
+            case 3: 
+                promotionSelected = "Bishop";
+            break;
+            case -1:
+                promotionSelected = "undo";
+            break;
+            default:
+                System.out.println("Error in Move.java -> setPromotionSelected(int section): Attempting to set promotionSelected to " + section);
+                System.exit(1);
+        }
+    }
+
     public String getMovePlayer() {
         return player;
     }
 
     public int getOffset() {
         return offset;
+    }
+
+    public String toString() {
+        String s = "\n[Move]" + 
+        "\nPlayer: " + player +
+        "\nPieceSelected: " + pieceSelected + 
+        "\nFromIndex: " + fromIndex +
+        "\nToIndex: " + toIndex +
+        "\nCapture: " + capture;
+
+        if(capture) {
+            s += ", " + pieceCaptured;
+        }
+
+        s += "\nEnPassant: " + enPassant +
+        "\nPromotion: " + promotion;
+
+        if(promotion) {
+            s += ", " + promotionSelected;
+        }
+
+        return s;
     }
 }

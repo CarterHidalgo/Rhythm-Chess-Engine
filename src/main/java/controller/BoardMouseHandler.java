@@ -2,6 +2,7 @@ package controller;
 
 import model.GameInfo;
 import model.Move;
+import model.MoveRecord;
 import model.Promotion;
 import model.Bitboard;
 import helper.Convert;
@@ -12,12 +13,11 @@ import view.board.BitboardGraphic;
 import view.board.BoardGraphic;
 import view.board.BoardOverlayGraphic;
 import view.board.HighPieceGraphic;
+import view.board.PromotionGraphic;
 
 public class BoardMouseHandler {
     public static void handleMousePressed(double mouseX, double mouseY) {
-        if(Promotion.isActive()) {
-            
-            
+        if(GameInfo.getGameState() == "promote") {
             return;
         }
         
@@ -30,8 +30,6 @@ public class BoardMouseHandler {
             if(Debug.on("C1")) {                
                 BitboardGraphic.drawBitboard(Bitboard.getBitboard(GameInfo.getPieceSelected()));
             }
-        } else if(mouseX == -1) {
-            
         } else {
             BoardOverlayGraphic.resetOverlayCanvas();
         }
@@ -44,6 +42,10 @@ public class BoardMouseHandler {
     }
 
     public static void handleMouseReleased(double mouseX, double mouseY) {
+        if(GameInfo.getGameState() == "promote") {
+            return;
+        }
+
         BoardOverlayGraphic.updateOverlayCanvas(mouseX, mouseY);
         GameInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
 
@@ -51,9 +53,17 @@ public class BoardMouseHandler {
             Move offeredMove = new Move(GameInfo.getPieceSelected(), GameInfo.getFromIndex(), GameInfo.getToIndex(), GameInfo.getSideToPlay());
 
             if(offeredMove.isValid()) {
+                if(offeredMove.isPromotion()) {
+                    Promotion.initPromotion(offeredMove);
+                }
+
                 Bitboard.updateWithMove(offeredMove);
                 BoardOverlayGraphic.highlightMove(offeredMove);
-                GameInfo.nextTurn();
+                
+                if(!offeredMove.isPromotion()) {
+                    MoveRecord.pushMove(offeredMove);
+                    GameInfo.nextTurn();
+                }
             } else {
                 if(GameInfo.getFromIndex() != GameInfo.getToIndex()) {
                     BoardOverlayGraphic.resetOverlayCanvas();
@@ -71,12 +81,14 @@ public class BoardMouseHandler {
     }
 
     public static void handleMouseClicked(double mouseX, double mouseY) {
-        // TO-DO: implement clicking (probably) for UI
+        if(GameInfo.getGameState() == "promote") {
+            Promotion.handlePieceSelection();
+        }
     }
 
     public static void handleMouseMoved(double mouseX, double mouseY) {
-        if(Promotion.isActive()) {
-            
+        if(GameInfo.getGameState() == "promote") {
+            PromotionGraphic.handleMouseOverCard(mouseX, mouseY);
         }
     }
 

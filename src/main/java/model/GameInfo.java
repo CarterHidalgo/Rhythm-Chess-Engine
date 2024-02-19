@@ -1,15 +1,17 @@
 package model;
 
 public class GameInfo {
-    private static boolean debug = true;
+    private static boolean debug = true; // set to false to manually override all debug settings to off
 
+    // Allowed Game States: [play, pause, promote, checkmate]
+    private static String gameState = "play";
     private static String pieceSelected = "none";
     private static int fromIndex = -1;
     private static int toIndex = -1;
 
     private static int turn = 0;
     private static int move = 0;
-    private static int side = 0;
+    private static int side = 0; // The side you play as: white = 0, black = 1
 
     private static final int BOARD_LENGTH = 800;
     private static final int SQUARE_LENGTH = 100;
@@ -101,6 +103,19 @@ public class GameInfo {
             return "black";
         } else {
             return "white";
+        }
+    }
+
+    public static String getGameState() {
+        return gameState;
+    }
+
+    public static void setGameState(String newGameState) {
+        gameState = newGameState;
+
+        if(gameState != "play" && gameState != "pause" && gameState != "promote" && gameState != "checkmate") {
+            System.out.println("Error in GameInfo.java -> setGameState(String newGameState): Attempted to set an invalid game state");
+            System.exit(1);
         }
     }
 }

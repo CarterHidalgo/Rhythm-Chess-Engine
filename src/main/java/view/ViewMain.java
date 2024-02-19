@@ -4,7 +4,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import model.GameInfo;
 import view.board.BoardGraphic;
+import view.board.PromotionGraphic;
 import view.ui.UserInterface;
 
 public class ViewMain {
@@ -23,5 +25,11 @@ public class ViewMain {
         Scene scene = new Scene(root, APP_WIDTH, APP_HEIGHT);
 
         return scene;
+    }
+
+    public static void updateViewMain() {
+        if(GameInfo.getGameState() == "promote") {
+            PromotionGraphic.updatePromotionGraphic();
+        }
     }
 }

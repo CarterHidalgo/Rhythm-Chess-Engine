@@ -1,5 +1,6 @@
 package base;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import view.ViewMain;
@@ -14,5 +15,21 @@ public class App extends Application {
         stage.setResizable(false);
         stage.setScene(ViewMain.initView());
         stage.show();
+
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                updateAnimation();
+            }
+        };
+
+        animationTimer.start();
+    }
+
+    private void updateAnimation() {
+        // ANIMATION LOOP
+
+        // Things to update: [UI, Board, Model?]
+        ViewMain.updateViewMain();
     }
 }

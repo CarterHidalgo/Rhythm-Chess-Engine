@@ -44,14 +44,14 @@ public class MoveValidation {
     }
 
     private static boolean validatePawn(Move move) {
-        if(move.getOffset() > 6 && move.getOffset() < 10 && Convert.bitboardIsSet(move.getMovePlayer() + "Promotion", move.getToIndex())) {
-            move.setPromotion();
-            return true;
-        }
-
         if(move.getOffset() == 7 || move.getOffset() == 9) {
             if(Convert.bitboardIsSet(GameInfo.getSideToWait(), move.getToIndex())) {
                 move.setCapture();
+
+                if(Convert.bitboardIsSet(move.getMovePlayer() + "Promotion", move.getToIndex())) {
+                    move.setPromotion();
+                }
+
                 return true;
             }
 
@@ -64,6 +64,10 @@ public class MoveValidation {
         } else if(move.getOffset() == 8) {
             if(Convert.bitboardIsSet("occupied", move.getToIndex())) {
                 return false;
+            }
+
+            if(Convert.bitboardIsSet(move.getMovePlayer() + "Promotion", move.getToIndex())) {
+                move.setPromotion();
             }
 
             return true;

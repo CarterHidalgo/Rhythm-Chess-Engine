@@ -6,7 +6,6 @@ import helper.Convert;
 import helper.FEN;
 import model.Bitboard;
 import model.GameInfo;
-import model.Promotion;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -15,7 +14,6 @@ import javafx.scene.paint.Color;
 public class BoardGraphic {
     private static StackPane boardStack = new StackPane();
     private static Canvas boardCanvas = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());
-    private static BoardOverlayGraphic overlayGraphic = new BoardOverlayGraphic();
     private static GraphicsContext boardCanvasContext = boardCanvas.getGraphicsContext2D();
     
     private static Color blackColor = Color.rgb(180, 140, 100);

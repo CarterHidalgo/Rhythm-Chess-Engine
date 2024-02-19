@@ -2,9 +2,11 @@ package model;
 
 import java.util.HashMap;
 
+import controller.ControllerMain;
 import helper.Convert;
 import helper.Debug;
 import helper.Printer;
+import view.board.BoardOverlayGraphic;
 
 public class Bitboard {
     public static String[] keys = {
@@ -150,20 +152,59 @@ public class Bitboard {
     }
 
     public static void updateWithMove(Move move) {
-        if(move.isEnPassant()) {
+        if(move.isPromotion()) {
+            if(move.getPromotionSelected().equals("none")) {
+                removeFromBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
+                removeFromBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+                removeFromBitboard("occupied", move.getFromIndex());
+            } else if(move.getPromotionSelected().equals("undo")) {
+                addToBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
+                addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+                addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+                
+                // put highlighting to previous move and terminate to regular play
+                BoardOverlayGraphic.highlightMove(MoveRecord.peekMove());
+                Promotion.terminatePromotion();
+                ControllerMain.redrawBoard();
+            } else {
+                if(move.isCapture()) {
+                    removeEnemy(move);
+                }
+
+                addToBitboard(GameInfo.getSideToPlay() + move.getPromotionSelected(), move.getToIndex()); // add selected self piece
+                addToBitboard(GameInfo.getSideToPlay(), move.getToIndex());
+                addToBitboard("occupied", move.getToIndex());
+
+                Promotion.endPromotion();
+                ControllerMain.redrawBoard();
+            }
+        } else if(move.isEnPassant()) {
+            move.setPieceCaptured(GameInfo.getSideToWait() + "Pawn");
+
             removeFromBitboard(GameInfo.getSideToWait(), Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
             removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
             removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
-        } else if(move.isPromotion()) {
-            Promotion.initPromotion();
-        } else if(move.isCapture()) {
-            removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex());
-            removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex());
+
+            advanceSelf(move);
+        } else {
+            if(move.isCapture()) {
+                removeEnemy(move);
+            }
+
+            advanceSelf(move);
         }
-        
-        updateBitboard("occupied", move.getFromIndex(), move.getToIndex());
-        updateBitboard(GameInfo.getSideToPlay(), move.getFromIndex(), move.getToIndex());
-        updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex());
+    }
+
+    private static void advanceSelf(Move move) {
+        updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex()); // add self piece 
+        updateBitboard(GameInfo.getSideToPlay(), move.getFromIndex(), move.getToIndex()); // add self side
+        updateBitboard("occupied", move.getFromIndex(), move.getToIndex()); // add occupied
+    }
+
+    private static void removeEnemy(Move move) {
+        move.setPieceCaptured(getKeyFromBitIndex(move.getToIndex())); // set piece captured
+        removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex()); // remove enemy piece 
+        removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex()); // remove enemy side 
     }
 
     private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {
@@ -175,9 +216,9 @@ public class Bitboard {
         bitboard.put(key, bitboard.get(key) & ~(1L << bitIndexToRemove));
     }
 
-    // private static void addToBitboard(String key, int bitIndexToAdd) {
-    //     bitboard.put(key, bitboard.get(key) | (1L << bitIndexToAdd));
-    // }
+    private static void addToBitboard(String key, int bitIndexToAdd) {
+        bitboard.put(key, bitboard.get(key) | (1L << bitIndexToAdd));
+    }
 
     private static String[] splitCamelCase(String camelCaseString) {
         int index = 0;

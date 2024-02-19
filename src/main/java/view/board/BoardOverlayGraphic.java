@@ -58,18 +58,18 @@ public class BoardOverlayGraphic {
         }
     }
 
-    public static void clearHighlightSquare() {
-        if(highlightCorner == null) {
-            return;
-        }
+    // public static void clearHighlightSquare() {
+    //     if(highlightCorner == null) {
+    //         return;
+    //     }
 
-        overlayContext.clearRect(
-            highlightCorner.getXAsInt(), 
-            highlightCorner.getYAsInt(), 
-            GameInfo.getSquareLength(), 
-            GameInfo.getSquareLength()
-        );
-    }
+    //     overlayContext.clearRect(
+    //         highlightCorner.getXAsInt(), 
+    //         highlightCorner.getYAsInt(), 
+    //         GameInfo.getSquareLength(), 
+    //         GameInfo.getSquareLength()
+    //     );
+    // }
 
     public static void safeClear() {
         clearOverlayCanvas();

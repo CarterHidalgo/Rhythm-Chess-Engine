@@ -1,9 +1,9 @@
->> Initialization <<
+>> Initialization 
 
 A1. Print all bitboards as squares at initialization: false
 A2. Print all bitboards as lines at initialization: false
 
->> Player Interaction with Board <<
+>> Player Interaction with Board 
 
 B1. Print home-player piece-bitboard as square when board is clicked: false
 B2. Print home-player piece-bitboard as line when board is clicked: false
@@ -11,7 +11,8 @@ B3. Print mouse coordinates as doubles when board is clicked: false
 B4. Print mouse coordinates as u and v integers when board is clicked: false
 B5. Print mouse coordinates as bit index into piece location bitboard when board is clicked: false
 B6. Print a message if the clicked square holds a home color piece: false
+B7. Print all move info after each move: true
 
 >> Bitboard Graphics
 
-C1. Show bitboard highlights for the clicked piece (in yellow): true
+C1. Show bitboard highlights for the clicked piece (in blue): true

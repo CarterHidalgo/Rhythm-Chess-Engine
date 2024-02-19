@@ -12,7 +12,7 @@ import model.GameInfo;
 public class BitboardGraphic {
     private static Canvas bitboardCanvas = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());
     private static GraphicsContext bitboardContext = bitboardCanvas.getGraphicsContext2D();
-    private static final Color bitboardSelectedColor = Color.rgb(255, 255, 0, 0.4);
+    private static final Color bitboardSelectedColor = Color.rgb(0, 0, 255, 0.4);
 
     public static Canvas getBoardOverlayCanvas() {
         return bitboardCanvas;
