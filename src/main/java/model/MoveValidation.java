@@ -1,6 +1,7 @@
 package model;
 
 import helper.Convert;
+import helper.Printer;
 
 public class MoveValidation {
     public static boolean consider(Move move) {
@@ -86,8 +87,17 @@ public class MoveValidation {
     }
 
     private static boolean validateKnight(Move move) {
+        Long offeredMoveMask = 1L << move.getToIndex();
 
-        return true;
+        if((KnightAttacks.getKnightAttack(move.getFromIndex()) & offeredMoveMask) != 0) {
+            if((offeredMoveMask & Bitboard.getBitboard(GameInfo.getSideToWait())) != 0) {
+                move.setCapture();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static boolean validateBishop(Move move) {

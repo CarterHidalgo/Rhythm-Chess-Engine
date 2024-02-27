@@ -11,7 +11,7 @@ B3. Print mouse coordinates as doubles when board is clicked: false
 B4. Print mouse coordinates as u and v integers when board is clicked: false
 B5. Print mouse coordinates as bit index into piece location bitboard when board is clicked: false
 B6. Print a message if the clicked square holds a home color piece: false
-B7. Print all move info after each move: true
+B7. Print all move info after each move: false
 
 >> Bitboard Graphics
 
