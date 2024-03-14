@@ -1,30 +1,23 @@
 # ChessBot
 
-This is a chess application built using Java with Maven and JavaFX. The application allows Computer v Computer, Computer v Human, or Human v Human chess games. It follows the standard rules of chess and provides an intuitive user interface for an enjoyable experience.
+This is a chess application built using Java with Maven and JavaFX. It is currently a work in progress. When completed, the application will allow Computer vs. Computer or Computer vs. Human chess games.
 
 ## Prerequisites
 - Java Development Kit (JDK) 21 or higher installed on your system.
-- Apache Maven installed to build and run the project.
-
-## Getting Started
-1. Clone the repository to your local machine: `git clone https://github.com/CarterHidalgo/CH__ChessBot__Java.git`
-2. Navigate to the project directory: `CH__ChessBot__Java`
-3. Build the project using Maven: `mvn clean install`
-4. Run the application: `mvn javafx:run`
 
 ## How to Play
-- Launch the application
-- Select the players
-- Click and drag pieces or press start to begin the game.
+- Launch the application by running the CH_ChessBot_Java.jar files
+- Select the players [WIP]
+- Click and drag pieces to begin playing the game.
 
 ## Features
 - User-friendly interface with drag-and-drop functionality.
-- Real-time validation of legal moves.
-- Supports standard chess rules and gameplay.
-- Offers multiple game and debug settings in the settings menu
+- Real-time validation of legal moves [WIP].
+- Supports standard chess rules and gameplay [WIP]
+- Offers multiple game and debug settings in the settings menu [WIP]
 
 ## Contributing
-If you find any issues or have suggestions for improvements, please contact me using the provided contact information
+If you find any issues or have suggestions for improvements, you can find my contact information on my LinkedIn page.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
