@@ -13,6 +13,8 @@ B5. Print mouse coordinates as bit index into piece location bitboard when board
 B6. Print a message if the clicked square holds a home color piece: false
 B7. Print all move info after each move: false
 
->> Bitboard Graphics
+>> Board Graphics
 
-C1. Show bitboard highlights for the clicked piece (in blue): true
+C1. Show bitboard highlights for the clicked piece (in blue): false
+C2. Show bitIndex on the top left corner of each square: true
+C3. Show board lookup nibble on the bottom left corner of each square: true

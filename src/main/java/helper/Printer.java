@@ -52,4 +52,12 @@ public class Printer {
 
         System.out.println(reversedBinaryString);
     }
+
+    public static void printBinary(byte value) {
+        System.out.println(String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0'));
+    }
+
+    public static void printBinary(short value) {
+        System.out.println(String.format("%16s", Integer.toBinaryString(value & 0xFFFF)).replace(' ', '0'));
+    }
 }

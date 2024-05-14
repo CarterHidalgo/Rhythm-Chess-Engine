@@ -5,36 +5,39 @@ public class GameInfo {
 
     // Allowed Game States: [play, pause, promote, checkmate]
     private static String gameState = "play";
-    private static String pieceSelected = "none";
-    private static int fromIndex = -1;
-    private static int toIndex = -1;
+    // private static String pieceSelected = "none";
+    // private static int fromIndex = -1;
+    // private static int toIndex = -1;
 
-    private static int turn = 0;
-    private static int move = 0;
-    private static int side = 0; // The side you play as: white = 0, black = 1
-
+    private static short turn = 0;
+    private static boolean move = false;
+    private static boolean side = false; // The side you play as: white = false, black = true
+    
     private static final int BOARD_LENGTH = 800;
     private static final int SQUARE_LENGTH = 100;
     private static final int UI_LENGTH = 300;
 
-    public static void setTurn(int newTurn) {
-        turn = newTurn;
-    }
-
     public static int getTurn() {
         return turn;
     }
-
-    public static void nextTurn() {
-        turn ^= 1;
-        addMove();
+    
+    public static void incrementTurn() {
+        turn++;
     }
 
+    public static void flipMove() {
+        move = !move;
+    }
+
+    public static boolean getMove() {
+        return move;
+    }
+    
     public static void setSide(int newSide) {
-        side = newSide;
+        side = !side;
     }
 
-    public static int getSide() {
+    public static boolean getSide() {
         return side;
     }
 
@@ -56,38 +59,6 @@ public class GameInfo {
 
     public static int getUILength() {
         return UI_LENGTH;
-    }
-
-    public static void setPieceSelected(String arg) {
-        pieceSelected = arg;
-    }
-
-    public static String getPieceSelected() {
-        return pieceSelected;
-    }
-
-    public static void setFromIndex(int arg) {
-        fromIndex = arg;
-    }
-
-    public static int getFromIndex() {
-        return fromIndex;
-    }
-
-    public static void setToIndex(int arg) {
-        toIndex = arg;
-    }
-
-    public static int getToIndex() {
-        return toIndex;
-    }
-
-    public static void addMove() {
-        move++;
-    }
-
-    public static int getMove() {
-        return move;
     }
 
     public static String getSideToPlay() {

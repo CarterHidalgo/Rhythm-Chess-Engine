@@ -9,7 +9,7 @@ public class MoveRecord {
 
     public static void pushMove(Move move) {
         if(Debug.on("B7")) {
-            System.out.println(move);
+            // System.out.println(move);
         }
         
         moves.add(move);

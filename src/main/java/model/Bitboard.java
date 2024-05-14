@@ -32,7 +32,7 @@ public class Bitboard {
     private static HashMap<String, Long> bitboard = new HashMap<>();
 
     public static void initBitboards() {
-        if(GameInfo.getSide() == 0) {
+        if(!GameInfo.getSide()) {
             bitboard.put("whitePawn", 0xFF00L);
             bitboard.put("whiteKnight", 0x42L);
             bitboard.put("whiteBishop", 0x24L);
@@ -151,60 +151,66 @@ public class Bitboard {
         return "NaN";
     }
 
-    public static void updateWithMove(Move move) {
-        if(move.isPromotion()) {
-            if(move.getPromotionSelected().equals("none")) {
-                removeFromBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
-                removeFromBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
-                removeFromBitboard("occupied", move.getFromIndex());
-            } else if(move.getPromotionSelected().equals("undo")) {
-                addToBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
-                addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
-                addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+    public static void updateWithMove(short move) {
+        // if(Move.isCapture(move)) {
+        //     removeOpponent(move);
+        // }
+
+        advanceSelf(move);
+
+        // if(Move.isPromotion(move)) {
+            // if(move.getPromotionSelected().equals("none")) {
+            //     removeFromBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
+            //     removeFromBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+            //     removeFromBitboard("occupied", move.getFromIndex());
+            // } else if(move.getPromotionSelected().equals("undo")) {
+            //     addToBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
+            //     addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
+            //     addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
                 
-                // put highlighting to previous move and terminate to regular play
-                BoardOverlayGraphic.highlightMove(MoveRecord.peekMove());
-                Promotion.terminatePromotion();
-                ControllerMain.redrawBoard();
-            } else {
-                if(move.isCapture()) {
-                    removeEnemy(move);
-                }
+            //     // put highlighting to previous move and terminate to regular play
+            //     BoardOverlayGraphic.highlightMove(MoveRecord.peekMove());
+            //     Promotion.terminatePromotion();
+            //     ControllerMain.redrawBoard();
+            // } else {
+            //     if(move.isCapture()) {
+            //         removeEnemy(move);
+            //     }
 
-                addToBitboard(GameInfo.getSideToPlay() + move.getPromotionSelected(), move.getToIndex()); // add selected self piece
-                addToBitboard(GameInfo.getSideToPlay(), move.getToIndex());
-                addToBitboard("occupied", move.getToIndex());
+            //     addToBitboard(GameInfo.getSideToPlay() + move.getPromotionSelected(), move.getToIndex()); // add selected self piece
+            //     addToBitboard(GameInfo.getSideToPlay(), move.getToIndex());
+            //     addToBitboard("occupied", move.getToIndex());
 
-                Promotion.endPromotion();
-                ControllerMain.redrawBoard();
-            }
-        } else if(move.isEnPassant()) {
-            move.setPieceCaptured(GameInfo.getSideToWait() + "Pawn");
+            //     Promotion.endPromotion();
+            //     ControllerMain.redrawBoard();
+            // }
+        // } else if(Move.isEnPassant(move)) {
+            // move.setPieceCaptured(GameInfo.getSideToWait() + "Pawn");
 
-            removeFromBitboard(GameInfo.getSideToWait(), Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
-            removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
-            removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), move.getToIndex(), -8));
+        //     removeFromBitboard(GameInfo.getSideToWait(), Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
+        //     removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
+        //     removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
 
-            advanceSelf(move);
-        } else {
-            if(move.isCapture()) {
-                removeEnemy(move);
-            }
+        //     advanceSelf(move);
+        // } else {
+        //     if(Move.isCapture(move)) {
+        //         removeEnemy(move);
+        //     }
 
-            advanceSelf(move);
-        }
+        //     advanceSelf(move);
+        // }
     }
 
-    private static void advanceSelf(Move move) {
-        updateBitboard(move.getPiece(), move.getFromIndex(), move.getToIndex()); // add self piece 
-        updateBitboard(GameInfo.getSideToPlay(), move.getFromIndex(), move.getToIndex()); // add self side
-        updateBitboard("occupied", move.getFromIndex(), move.getToIndex()); // add occupied
+    private static void advanceSelf(short move) {
+        updateBitboard(BoardLookup.getPieceByBitIndex(Move.getFromIndex(move)), Move.getFromIndex(move), Move.getToIndex(move)); // add self piece 
+        updateBitboard(GameInfo.getSideToPlay(), Move.getFromIndex(move), Move.getToIndex(move)); // add self side
+        updateBitboard("occupied", Move.getFromIndex(move), Move.getToIndex(move)); // add occupied
     }
 
-    private static void removeEnemy(Move move) {
-        move.setPieceCaptured(getKeyFromBitIndex(move.getToIndex())); // set piece captured
-        removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex()); // remove enemy piece 
-        removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex()); // remove enemy side 
+    private static void removeOpponent(short move) {
+        // move.setPieceCaptured(getKeyFromBitIndex(move.getToIndex())); // set piece captured
+        // removeFromBitboard(getKeyFromBitIndex(move.getToIndex()), move.getToIndex()); // remove enemy piece 
+        // removeFromBitboard(GameInfo.getSideToWait(), move.getToIndex()); // remove enemy side 
     }
 
     private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {

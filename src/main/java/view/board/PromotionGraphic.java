@@ -121,7 +121,7 @@ public class PromotionGraphic {
             promotionCanvasContext.drawImage(
                 piecesImage,
                 SPRITE_LENGTH * textureOffset,
-                SPRITE_LENGTH * GameInfo.getSide(),
+                SPRITE_LENGTH * (GameInfo.getSide() == false ? 0 : 1),
                 SPRITE_LENGTH,
                 SPRITE_LENGTH,
                 -imageScale[i] / 2,

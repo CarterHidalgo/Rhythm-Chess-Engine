@@ -14,11 +14,11 @@ public class BitboardGraphic {
     private static GraphicsContext bitboardContext = bitboardCanvas.getGraphicsContext2D();
     private static final Color bitboardSelectedColor = Color.rgb(0, 0, 255, 0.4);
 
-    public static Canvas getBoardOverlayCanvas() {
+    public static Canvas getBitboardCanvas() {
         return bitboardCanvas;
     }
 
-    public static void drawBitboard(long bitboard) {
+    public static void drawBitboardGraphic(long bitboard) {
         ArrayList<Vec2> bitboardCorners = Convert.bitboardToCorners(bitboard);
         bitboardContext.setFill(bitboardSelectedColor);
 
@@ -32,7 +32,7 @@ public class BitboardGraphic {
         }
     }
 
-    public static void clearBitboard() {
+    public static void clearBitboardGraphic() {
         bitboardContext.clearRect(0, 0, GameInfo.getBoardLength(), GameInfo.getBoardLength());
     }
 }

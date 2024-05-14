@@ -1,15 +1,19 @@
 package view.board;
 
+import controller.MouseEventListner;
 import helper.Vec2;
-import controller.BoardCatch;
+import helper.Debug;
 import helper.Convert;
 import helper.FEN;
 import model.Bitboard;
 import model.GameInfo;
+import model.BoardLookup;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class BoardGraphic {
     private static StackPane boardStack = new StackPane();
@@ -21,9 +25,6 @@ public class BoardGraphic {
     
     private static boolean initialized = false;
 
-    private static String currentFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    private static String[] fields;
-
     public static StackPane getFullBoardStack() {
         if(!initialized) {
             drawBoardGraphicByBitboard();
@@ -34,19 +35,18 @@ public class BoardGraphic {
             BoardOverlayGraphic.getBoardOverlayCanvas(),
             PieceGraphic.getPieceCanvas(), 
             HighPieceGraphic.getPieceCanvas(),
-            BitboardGraphic.getBoardOverlayCanvas(),
+            BitboardGraphic.getBitboardCanvas(),
+            BoardLookupGraphic.getBoardLookupCanvas(),
             PromotionGraphic.getPromotionCanvas(),
-            BoardCatch.getBoardOverlayEventCanvas()
+            MouseEventListner.getBoardOverlayEventCanvas()
         );
-        BoardCatch.setupCatchMouseEvent();
+        MouseEventListner.setupCatchMouseEvent();
 
         return boardStack;
     }
     
-    public static void drawBoardGraphicByFEN(String setFEN) {
-        currentFEN = setFEN;
-
-        fields = currentFEN.split("\\s+");
+    public static void drawBoardGraphicByFEN(String fen) {
+        String[] fields = fen.split("\\s+");
         
         int file = 0;
         int rank = 0;
@@ -70,12 +70,16 @@ public class BoardGraphic {
         PieceGraphic.clearPieceCanvas();
         HighPieceGraphic.clearPieceCanvas();
 
+        if(Debug.on("C3")) {
+            BoardLookupGraphic.drawBoardLookupGraphic();
+        }
+
         for(String currentKey : Bitboard.keys) {
             drawBitboardPieces(Bitboard.getBitboard(currentKey), currentKey);
         }
     }
 
-    public static void pieceClickedByMouse(double mouseX, double mouseY) {
+    public static void pieceClickedByMouse(float mouseX, float mouseY) {
         BoardOverlayGraphic.drawHighlightSquare(mouseX, mouseY);
         PieceGraphic.clearByMouse(mouseX, mouseY);
         PieceGraphic.addFadedPieceToStack(mouseX, mouseY);
@@ -86,7 +90,7 @@ public class BoardGraphic {
         int bitCount = Long.bitCount(bitboard);
 
         for(int i = 0; i < bitCount; i++) {
-            int bitIndex = Long.numberOfTrailingZeros(bitboard);
+            byte bitIndex = (byte) Long.numberOfTrailingZeros(bitboard);
 
             PieceGraphic.addPieceToStack(Bitboard.getPieceIDFromKey(currentKey), Convert.bitIndexToCorner(bitIndex));
 
@@ -95,22 +99,30 @@ public class BoardGraphic {
     }
     
     private static Canvas getBoardCanvas() {
-        for(int file = 0; file < 8; file++) {
-            for(int rank = 0; rank < 8; rank++) {
+        byte bitIndex = 0;
+
+        for(int rank = 7; rank > -1; rank--) {
+            for(int file = 0; file < 8; file++) {
                 boolean isWhite = (file + rank) % 2 == 0;
     
                 Color squareColor = (isWhite) ? whiteColor : blackColor;
                 Vec2 position = new Vec2(file * 100, rank * 100);
     
-                drawSquare(position, squareColor);
+                drawSquare(position, squareColor, bitIndex++);
             }
         }
 
         return boardCanvas;
     }
 
-    private static void drawSquare(Vec2 position, Color color) {
+    private static void drawSquare(Vec2 position, Color color, byte bitIndex) {
         boardCanvasContext.setFill(color);
         boardCanvasContext.fillRect(position.getX(), position.getY(), 100, 100); 
+
+        if(Debug.on("C2")) {
+            boardCanvasContext.setFill(Color.BLACK);
+            boardCanvasContext.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+            boardCanvasContext.fillText(Integer.toString(bitIndex), position.getX() + 5, position.getY() + 15);
+        }
     }
 }

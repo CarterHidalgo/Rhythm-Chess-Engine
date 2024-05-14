@@ -6,13 +6,13 @@ import view.board.PromotionGraphic;
 
 public class Promotion {
     private static boolean ignoreInitial = true;
-    private static Move promotionMove;
+    private static short promotionMove;
 
-    public static void initPromotion(Move move) {
+    public static void initPromotion(short move) {
         promotionMove = move;
         BoardOverlayGraphic.clearOverlayCanvas();
         GameInfo.setGameState("promote");
-        PromotionGraphic.setCardX(Convert.bitIndexToUV(move.getToIndex()).getYAsInt());
+        PromotionGraphic.setCardX(Convert.bitIndexToUV(Move.getToIndex(move)).getYAsInt());
         PromotionGraphic.drawPromotionGraphic();
     }
 
@@ -23,9 +23,9 @@ public class Promotion {
         }
         
         if(PromotionGraphic.getSection() > -1) {
-            promotionMove.setPromotionSelected(PromotionGraphic.getSection());
+            // promotionMove.setPromotionSelected(PromotionGraphic.getSection());
         } else {
-            promotionMove.setPromotionSelected(-1); // undo the promotion
+            // promotionMove.setPromotionSelected(-1); // undo the promotion
         }
 
         Bitboard.updateWithMove(promotionMove);
@@ -33,21 +33,21 @@ public class Promotion {
 
     public static void endPromotion() {
         PromotionGraphic.resetPromotionGraphic();
-        MoveRecord.pushMove(promotionMove);
+        // MoveRecord.pushMove(promotionMove);
         GameInfo.setGameState("play");
-        GameInfo.setPieceSelected("none");
-        GameInfo.nextTurn();
+        // GameInfo.setPieceSelected("none");
+        GameInfo.flipMove();
 
         ignoreInitial = true;
-        promotionMove = null;
+        // promotionMove = null;
     }
 
     public static void terminatePromotion() {
         PromotionGraphic.resetPromotionGraphic();
         GameInfo.setGameState("play");
-        GameInfo.setPieceSelected("none");
+        // GameInfo.setPieceSelected("none");
 
         ignoreInitial = true;
-        promotionMove = null;
+        // promotionMove = null;
     }
 }
