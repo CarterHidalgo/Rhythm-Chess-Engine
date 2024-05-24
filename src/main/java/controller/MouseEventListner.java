@@ -3,7 +3,7 @@ package controller;
 import javafx.scene.canvas.Canvas;
 import model.GameInfo;
 
-public class BoardCatch {
+public class MouseEventListner {
     private static Canvas overlayCatch = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());
 
     public static Canvas getBoardOverlayEventCanvas() {
@@ -12,23 +12,23 @@ public class BoardCatch {
 
     public static void setupCatchMouseEvent() {
         overlayCatch.setOnMousePressed(event -> {
-            BoardMouseHandler.handleMousePressed(event.getX(), event.getY());
+            BoardMouseHandler.handleMousePressed((float) event.getX(), (float) event.getY());
         });
         
         overlayCatch.setOnMouseDragged(event -> {
-            BoardMouseHandler.handleMouseDragged(event.getX(), event.getY());
+            BoardMouseHandler.handleMouseDragged((float) event.getX(), (float) event.getY());
         });
 
         overlayCatch.setOnMouseReleased(event -> {
-            BoardMouseHandler.handleMouseReleased(event.getX(), event.getY());
+            BoardMouseHandler.handleMouseReleased((float) event.getX(), (float) event.getY());
         });
 
         overlayCatch.setOnMouseClicked(event -> {
-            BoardMouseHandler.handleMouseClicked(event.getX(), event.getY());
+            BoardMouseHandler.handleMouseClicked((float) event.getX(), (float) event.getY());
         });
 
         overlayCatch.setOnMouseMoved(event -> {
-            BoardMouseHandler.handleMouseMoved(event.getX(), event.getY());
+            BoardMouseHandler.handleMouseMoved((float) event.getX(), (float) event.getY());
         });
     }
 }

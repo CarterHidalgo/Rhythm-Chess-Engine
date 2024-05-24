@@ -6,12 +6,14 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import model.Bitboard;
+import model.BoardLookup;
 import model.GameInfo;
 
 public class PieceGraphic {
     /*
      * Piece ennumeration order is based on the order in pieces.png to make it easier to set
-     * the image coordinates in setImageCoords()
+     * the image coordinates in setImageCoords(). Note this enumeration is NOT the same as
+     * the enumeration used in BoardLookup
      * 
      * None: 0
      * King: 1
@@ -61,10 +63,10 @@ public class PieceGraphic {
         );
     }
 
-    public static void addFadedPieceToStack(double mouseX, double mouseY) {
+    public static void addFadedPieceToStack(float mouseX, float mouseY) {
         setImageCoords(
             Bitboard.getPieceIDFromKey(
-                Bitboard.getKeyFromBitIndex(
+                BoardLookup.getPieceByBitIndex(
                     Convert.mouseToBitIndex(mouseX, mouseY)
                 )
             )
@@ -95,7 +97,7 @@ public class PieceGraphic {
         pieceCanvasContext.clearRect(0, 0, GameInfo.getBoardLength(), GameInfo.getBoardLength());
     }
 
-    public static void clearByMouse(double mouseX, double mouseY) {
+    public static void clearByMouse(float mouseX, float mouseY) {
         Vec2 clearSquareUV = Convert.mouseToCorner(mouseX, mouseY);
 
         pieceCanvasContext.clearRect(

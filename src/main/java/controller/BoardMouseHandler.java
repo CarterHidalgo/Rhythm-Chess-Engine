@@ -1,8 +1,10 @@
 package controller;
 
 import model.GameInfo;
+import model.PlayerMoveInfo;
+import model.BoardLookup;
 import model.Move;
-import model.MoveRecord;
+import model.MoveGeneration;
 import model.Promotion;
 import model.Bitboard;
 import helper.Convert;
@@ -16,86 +18,81 @@ import view.board.HighPieceGraphic;
 import view.board.PromotionGraphic;
 
 public class BoardMouseHandler {
-    public static void handleMousePressed(double mouseX, double mouseY) {
+    public static void handleMousePressed(float mouseX, float mouseY) {
         if(GameInfo.getGameState() == "promote") {
             return;
         }
         
-        if(isOverHomePiece(mouseX, mouseY)) {
-            int bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
-            GameInfo.setPieceSelected(Bitboard.getKeyFromBitIndex(bitIndex));
-            GameInfo.setFromIndex(bitIndex);
+        if(isOverSelfPiece(mouseX, mouseY)) {
+            byte bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
+
+            PlayerMoveInfo.setPieceSelected(BoardLookup.getPieceByBitIndex(bitIndex));
+            PlayerMoveInfo.setFromIndex(bitIndex);
             BoardGraphic.pieceClickedByMouse(mouseX, mouseY);
 
-            if(Debug.on("C1")) {                
-                BitboardGraphic.drawBitboard(Bitboard.getBitboard(GameInfo.getPieceSelected()));
+            if(Debug.on("C1")) {
+                BitboardGraphic.drawBitboardGraphic(Bitboard.getBitboard(PlayerMoveInfo.getPieceSelected()), BitboardGraphic.bitboardColor);
+            }
+
+            if(Debug.on("C4")) {
+                BitboardGraphic.drawBitboardGraphic(MoveGeneration.getMoveBitboard(PlayerMoveInfo.getFromIndex()), BitboardGraphic.movesColor);
             }
         } else {
             BoardOverlayGraphic.resetOverlayCanvas();
         }
     }
 
-    public static void handleMouseDragged(double mouseX, double mouseY) {
-        if(!GameInfo.getPieceSelected().equals("none")) {
+    public static void handleMouseDragged(float mouseX, float mouseY) {
+        if(!PlayerMoveInfo.getPieceSelected().equals("empty")) {
             HighPieceGraphic.updateWhenDragged(mouseX, mouseY);
         }
     }
 
-    public static void handleMouseReleased(double mouseX, double mouseY) {
+    public static void handleMouseReleased(float mouseX, float mouseY) {
         if(GameInfo.getGameState() == "promote") {
             return;
         }
 
         BoardOverlayGraphic.updateOverlayCanvas(mouseX, mouseY);
-        GameInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
+        PlayerMoveInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
 
-        if(!GameInfo.getPieceSelected().equals("none")) {
-            Move offeredMove = new Move(GameInfo.getPieceSelected(), GameInfo.getFromIndex(), GameInfo.getToIndex(), GameInfo.getSideToPlay());
+        if(!PlayerMoveInfo.getPieceSelected().equals("empty")) {
+            short offeredMove = Move.createSimpleMove(PlayerMoveInfo.getFromIndex(), PlayerMoveInfo.getToIndex());
+            short upgradedMove = Move.upgradeSimpleMove(offeredMove);
 
-            if(offeredMove.isValid()) {
-                if(offeredMove.isPromotion()) {
-                    Promotion.initPromotion(offeredMove);
-                }
-
-                Bitboard.updateWithMove(offeredMove);
-                BoardOverlayGraphic.highlightMove(offeredMove);
-                
-                if(!offeredMove.isPromotion()) {
-                    MoveRecord.pushMove(offeredMove);
-                    GameInfo.nextTurn();
-                }
-            } else {
-                if(GameInfo.getFromIndex() != GameInfo.getToIndex()) {
-                    BoardOverlayGraphic.resetOverlayCanvas();
-                }
+            if(Move.isLegalUpgradedMove(upgradedMove)) {
+                Move.updateWithMove(upgradedMove);
+            } else if(PlayerMoveInfo.getFromIndex() != PlayerMoveInfo.getToIndex()) {
+                BoardOverlayGraphic.resetOverlayCanvas();
             }
-            
+
+            /*
+             * In either case the piece has been released and the board must be either
+             * reset or updated by drawing according to bitboards
+             */
             BoardGraphic.drawBoardGraphicByBitboard();
-            
-            if(Debug.on("C1")) {
-                BitboardGraphic.clearBitboard();
-            }
+            PlayerMoveInfo.setPieceSelected("empty");
 
-            GameInfo.setPieceSelected("none");
+            if(Debug.on("C1") || Debug.on("C4")) {
+                BitboardGraphic.clearBitboardGraphic();
+            }
         }
     }
 
-    public static void handleMouseClicked(double mouseX, double mouseY) {
+    public static void handleMouseClicked(float mouseX, float mouseY) {
         if(GameInfo.getGameState() == "promote") {
             Promotion.handlePieceSelection();
         }
     }
 
-    public static void handleMouseMoved(double mouseX, double mouseY) {
+    public static void handleMouseMoved(float mouseX, float mouseY) {
         if(GameInfo.getGameState() == "promote") {
             PromotionGraphic.handleMouseOverCard(mouseX, mouseY);
         }
     }
 
-    private static boolean isOverHomePiece(double mouseX, double mouseY) {
-        long pieceLocation = Bitboard.getBitboard((GameInfo.getTurn() == 0) ? "white" : "black");
-
-        Vec2 uv = Convert.mouseToUV(mouseX, mouseY);
+    private static boolean isOverSelfPiece(float mouseX, float mouseY) {
+        long pieceLocation = Bitboard.getBitboard(GameInfo.getTurn());
         int bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
         
         if(Debug.on("B1")) {
@@ -109,8 +106,9 @@ public class BoardMouseHandler {
         if(Debug.on("B3")) {
             Printer.print(" >> " + mouseX + " " + mouseY);
         }
-        
+
         if(Debug.on("B4")) {
+            Vec2 uv = Convert.mouseToUV(mouseX, mouseY);
             Printer.print(" >> " + uv.getXAsInt() + " " + uv.getYAsInt());
         }
         
@@ -120,7 +118,7 @@ public class BoardMouseHandler {
         
         if((pieceLocation & (1L << bitIndex)) != 0) {
             if(Debug.on("B6")) {
-                Printer.print(" >> This square holds a home color piece");
+                Printer.print(" >> This square holds a self color piece");
             }
 
             return true;

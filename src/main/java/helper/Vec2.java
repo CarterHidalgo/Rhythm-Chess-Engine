@@ -30,11 +30,23 @@ public class Vec2 {
         return (int) y;
     }
 
+    public byte getXAsByte() {
+        return (byte) x;
+    }
+
+    public byte getYAsByte() {
+        return (byte) y;
+    }
+
     public void setX(float x) {
         this.x = x;
     }
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    public String toString() {
+        return "x: " + x + "\ny: " + y;
     }
 }

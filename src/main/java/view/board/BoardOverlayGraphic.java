@@ -26,7 +26,7 @@ public class BoardOverlayGraphic {
         return overlayCanvas;
     }
 
-    public static void drawHighlightSquare(double mouseX, double mouseY) {
+    public static void drawHighlightSquare(float mouseX, float mouseY) {
         if(highlightIndex == Convert.mouseToBitIndex(mouseX, mouseY)) {
             clickCount++;
         } else {
@@ -41,11 +41,11 @@ public class BoardOverlayGraphic {
         overlayContext.fillRect(highlightCorner.getXAsInt(), highlightCorner.getYAsInt(), GameInfo.getSquareLength(), GameInfo.getSquareLength());
     }
 
-    public static void highlightMove(Move move) {
+    public static void highlightMove(short move) {
         clearOverlayCanvas();
 
-        fromCorner = Convert.bitIndexToCorner(move.getFromIndex());
-        toCorner = Convert.bitIndexToCorner(move.getToIndex());
+        fromCorner = Convert.bitIndexToCorner(Move.getFromIndex(move));
+        toCorner = Convert.bitIndexToCorner(Move.getToIndex(move));
 
         overlayContext.setFill(moveColor);
         overlayContext.fillRect(fromCorner.getXAsInt(), fromCorner.getYAsInt(), GameInfo.getSquareLength(), GameInfo.getSquareLength());
@@ -57,6 +57,8 @@ public class BoardOverlayGraphic {
             safeClear();
         }
     }
+
+    // NOT part of 16-bit-moves branch update - this was commented out prior to the creation of this branch
 
     // public static void clearHighlightSquare() {
     //     if(highlightCorner == null) {

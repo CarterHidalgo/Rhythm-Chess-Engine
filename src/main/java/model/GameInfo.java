@@ -5,36 +5,46 @@ public class GameInfo {
 
     // Allowed Game States: [play, pause, promote, checkmate]
     private static String gameState = "play";
-    private static String pieceSelected = "none";
-    private static int fromIndex = -1;
-    private static int toIndex = -1;
 
-    private static int turn = 0;
-    private static int move = 0;
-    private static int side = 0; // The side you play as: white = 0, black = 1
-
+    /*
+     * DEFINE:
+     *   turn: a play made by either white or black (flip flops to indicate who's TURN it is to play)
+     *   move: a move is a turn by white and black and will increment after a turn by black
+     *   side: a side is what color the player plays as for the entire game (white = false; black = true)
+     */
+    private static short move = 0; // initially no moves have been played
+    private static boolean turn = false; // initially white has the first turn
+    private static boolean side = false; // initially player defaults to white
+    
     private static final int BOARD_LENGTH = 800;
     private static final int SQUARE_LENGTH = 100;
     private static final int UI_LENGTH = 300;
 
-    public static void setTurn(int newTurn) {
-        turn = newTurn;
+    public static short getMove() {
+        return move;
     }
 
-    public static int getTurn() {
-        return turn;
+    public static void incrementMove() {
+        move++;
+    }
+
+    public static String getTurn() {
+        return (turn) ? "black" : "white";
+    }
+
+    public static String getOpponent() {
+        return (turn) ? "white" : "black";
     }
 
     public static void nextTurn() {
-        turn ^= 1;
-        addMove();
+        turn = !turn;
     }
-
+    
     public static void setSide(int newSide) {
-        side = newSide;
+        side = !side;
     }
 
-    public static int getSide() {
+    public static boolean getSide() {
         return side;
     }
 
@@ -56,54 +66,6 @@ public class GameInfo {
 
     public static int getUILength() {
         return UI_LENGTH;
-    }
-
-    public static void setPieceSelected(String arg) {
-        pieceSelected = arg;
-    }
-
-    public static String getPieceSelected() {
-        return pieceSelected;
-    }
-
-    public static void setFromIndex(int arg) {
-        fromIndex = arg;
-    }
-
-    public static int getFromIndex() {
-        return fromIndex;
-    }
-
-    public static void setToIndex(int arg) {
-        toIndex = arg;
-    }
-
-    public static int getToIndex() {
-        return toIndex;
-    }
-
-    public static void addMove() {
-        move++;
-    }
-
-    public static int getMove() {
-        return move;
-    }
-
-    public static String getSideToPlay() {
-        if(turn == 0) {
-            return "white";
-        } else {
-            return "black";
-        }
-    }
-
-    public static String getSideToWait() {
-        if(turn == 0) {
-            return "black";
-        } else {
-            return "white";
-        }
     }
 
     public static String getGameState() {

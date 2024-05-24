@@ -3,7 +3,7 @@
 A1. Print all bitboards as squares at initialization: false
 A2. Print all bitboards as lines at initialization: false
 
->> Player Interaction with Board 
+>> Player Interaction With Board 
 
 B1. Print home-player piece-bitboard as square when board is clicked: false
 B2. Print home-player piece-bitboard as line when board is clicked: false
@@ -13,6 +13,20 @@ B5. Print mouse coordinates as bit index into piece location bitboard when board
 B6. Print a message if the clicked square holds a home color piece: false
 B7. Print all move info after each move: false
 
->> Bitboard Graphics
+>> Board Graphics
 
-C1. Show bitboard highlights for the clicked piece (in blue): true
+C1. Show bitboard highlights for the clicked piece (in blue): false
+C2. Show bitIndex on the top left corner of each square: true
+C3. Show board lookup nibble on the bottom left corner of each square: false
+C4. Show all legal move highlights for the clicked piece (in pink): true
+
+>> Move Generation
+
+D1. Print perft move information at a depth of 1 for any move generation: false
+D2. Print all legal moves on any generation: false
+
+>> Timer 
+
+E1. Timer for initializing bitboards: false
+E2. Placeholder for future timers: false
+E3. Timer for generate legal moves: false

@@ -8,13 +8,13 @@ public class Printer {
     }
 
     public static void printAllBitboards() {
-        for(String currentKey : Bitboard.keys) {
+        for(String currentKey : Bitboard.pieceKeys) {
             printBitboard(Bitboard.getBitboard(currentKey), "\n" + currentKey);
         }
     }
 
     public static void printAllBitboardsAsLines() {
-        for(String currentKey : Bitboard.keys) {
+        for(String currentKey : Bitboard.pieceKeys) {
             printBitboardAsLine(Bitboard.getBitboard(currentKey), "\n" + currentKey);
             System.out.println();
         }
@@ -51,5 +51,13 @@ public class Printer {
         String reversedBinaryString = new StringBuilder(binaryString).reverse().toString();
 
         System.out.println(reversedBinaryString);
+    }
+
+    public static void printBinary(byte value) {
+        System.out.println(String.format("%8s", Integer.toBinaryString(value & 0xFF)).replace(' ', '0'));
+    }
+
+    public static void printBinary(short value) {
+        System.out.println(String.format("%16s", Integer.toBinaryString(value & 0xFFFF)).replace(' ', '0'));
     }
 }
