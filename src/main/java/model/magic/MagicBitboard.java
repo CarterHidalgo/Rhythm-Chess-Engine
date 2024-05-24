@@ -5,15 +5,10 @@ import java.util.Random;
 
 import helper.Bit;
 import helper.Coord;
-import helper.Printer;
 import model.Bitboard;
 
 public class MagicBitboard {
     /*
-     * ABOUT: 
-     *  An implementation of fancy magic bitboards with individual shifts and no constructive collision 
-     *  optimization. 
-     * 
      * DEFINE
      *  blockerSet: An in-order set of all possible configurations of blockers for a given square/piece combination
      *      Border squares are excluded since blockers are always attacked and blockers can only change the square
@@ -295,20 +290,3 @@ public class MagicBitboard {
         }
     }
 }
-
-/*
-
-For square 63
-...............
-Previous best: 4096
-New best: 2304
-Magic: 1200772246015809234
-.........................
-Previous best: 2304
-New best: 2176
-Magic: -6227352389551664102
-
-
-
-
- */

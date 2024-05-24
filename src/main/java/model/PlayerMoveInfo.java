@@ -1,6 +1,12 @@
 package model;
 
 public class PlayerMoveInfo {
+    /*
+     * Player moves are not the same as algorithm moves since player moves are dependent on the GUI.
+     * This class stores information about what move the player is *attempting* to make when they
+     * click on a piece and then release it. This is not involved in MoveGeneration or Validation -
+     * it only serves as storage when the player is making a GUI-based move on their turn only. 
+     */
     private static String pieceSelected = "empty";
     private static byte fromIndex = -1;
     private static byte toIndex = -1;

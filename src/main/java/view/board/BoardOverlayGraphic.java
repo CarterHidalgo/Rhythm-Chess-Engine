@@ -58,21 +58,6 @@ public class BoardOverlayGraphic {
         }
     }
 
-    // NOT part of 16-bit-moves branch update - this was commented out prior to the creation of this branch
-
-    // public static void clearHighlightSquare() {
-    //     if(highlightCorner == null) {
-    //         return;
-    //     }
-
-    //     overlayContext.clearRect(
-    //         highlightCorner.getXAsInt(), 
-    //         highlightCorner.getYAsInt(), 
-    //         GameInfo.getSquareLength(), 
-    //         GameInfo.getSquareLength()
-    //     );
-    // }
-
     public static void safeClear() {
         clearOverlayCanvas();
         highlightMove();

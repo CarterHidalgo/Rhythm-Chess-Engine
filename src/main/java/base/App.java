@@ -3,8 +3,8 @@ package base;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import view.ViewMain;
 import model.ModelMain;
+import view.ViewMain;
 
 public class App extends Application {
     @Override
@@ -29,7 +29,7 @@ public class App extends Application {
     private void updateAnimation() {
         // ANIMATION LOOP
 
-        // Things to update: [UI, Board, Model?]
+        // Things to update: [UI, Board, Model]
         ViewMain.updateViewMain();
     }
 }

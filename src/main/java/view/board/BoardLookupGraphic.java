@@ -1,14 +1,14 @@
 package view.board;
 
-import helper.Vec2;
 import helper.Bit;
-import model.BoardLookup;
-import model.GameInfo;
+import helper.Vec2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import model.BoardLookup;
+import model.GameInfo;
 
 public class BoardLookupGraphic {
     private static Canvas boardLookupCanvas = new Canvas(GameInfo.getBoardLength(), GameInfo.getBoardLength());

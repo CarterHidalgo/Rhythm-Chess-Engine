@@ -10,7 +10,7 @@ public class Convert {
      * Mouse: (0,0) is top left of application window - float mouseX and mouseY (pixel value)
      * Corners: (0,0) is top left of application window - byte value top left square corner (pixel value)
      * UV: (0,0) is bottom left of application window - byte value as an index 0-7 (accessed like a 2D array)
-     * BitIndex: 0 is bottom left of application window - byte value as an index 0-63 into bitboard
+     * BitIndex: 0 is bottom left of application window - byte value as an index 0-63 into bitboard (sometimes called "square" as well)
      */
     
     public static Vec2 mouseToCorner(float mouseX, float mouseY) {
@@ -41,13 +41,9 @@ public class Convert {
         return bitIndex;
     }
 
-    public static void cornerToUV() {
-        
-    }
+    // Corner to UV will be added on an as needed basis
 
-    public static void cornerToBitIndex() {
-        
-    }
+    // Corner to BitIndex will be added on an as needed basis
 
     public static Vec2 uvToCorner(byte u, byte v) {
         short cx = (short) (v * GameInfo.getSquareLength());

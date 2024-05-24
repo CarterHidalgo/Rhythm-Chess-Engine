@@ -1,16 +1,17 @@
 package model;
 
 import java.util.HashMap;
-import helper.FEN;
-import helper.Convert;
+
 import helper.Bit;
+import helper.Convert;
 import helper.Debug;
+import helper.FEN;
+import helper.Offset;
 import helper.Printer;
 import helper.Timer;
-import helper.Offset;
 
 public class Bitboard {
-    // a list of all piece bitboards used to track pieces (i.e. whiteKnight or blackBishop)
+    // a list of all bitboards used to track pieces (i.e. whiteKnight or blackBishop)
     public static String[] pieceKeys = {
         "whitePawn",
         "whiteKnight",
@@ -54,15 +55,14 @@ public class Bitboard {
     private static HashMap<String, Long> bitboard = new HashMap<>();
 
     public static void initBitboardsByFEN(String currentFEN) {
-        // for when the starting FEN does not include all pieces we still need to define them
+        // for when the starting FEN does not include all pieces we still need to define them to 0 to avoid bitboard lookup errors
         defineBitboardsByKeys(); 
 
         if(Debug.on("E1")) {
             Timer.start("initBitboards", "nano");
         }
 
-        // DYNAMIC BITBOARDS
-
+        // piece and dynamic bitboards
         byte rank = 7;
         byte file = 0;
 
@@ -96,8 +96,8 @@ public class Bitboard {
         bitboard.put("ep", 0x0L);
 
 
-        // STATIC BITBOARDS
-        // Note: Ignoring the possibility that the player may choose to play as black, thus swapping white and black
+        // static bitboards
+        // Note: I am currently ignoring the possibility that the player may choose to play as black, thus swapping white and black
         bitboard.put("whitePawnStart", 0xFF00L);
         bitboard.put("whitePromotion", 0xFF00000000000000L);
 
@@ -109,15 +109,6 @@ public class Bitboard {
         bitboard.put("hFile", 0x8080808080808080L);
         bitboard.put("1Rank", 0xFFL);
         bitboard.put("8Rank", 0xFF00000000000000L);
-
-        // for(int index = 0; index < 64; index++) {
-        //     long rookMask = getRookMask(index);
-
-        //     if(rookMask != 0) {
-        //         System.out.println("0x" + Long.toHexString(rookMask) + "L, // " + index);
-        //     }
-
-        // }
 
         // Debugging info
         if(Debug.on("E1")) {
@@ -184,6 +175,7 @@ public class Bitboard {
         return ID;
     }
 
+    // only bitboards should be updated in this method
     public static void updateWithMove(short move) {
         if(Move.isCapture(move)) {
             removeOpponent(move);
@@ -191,48 +183,6 @@ public class Bitboard {
 
         advanceSelf(move);
         updateNeutrals(move);
-
-        // if(Move.isPromotion(move)) {
-            // if(move.getPromotionSelected().equals("none")) {
-            //     removeFromBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
-            //     removeFromBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
-            //     removeFromBitboard("occupied", move.getFromIndex());
-            // } else if(move.getPromotionSelected().equals("undo")) {
-            //     addToBitboard(GameInfo.getSideToPlay() + "Pawn", move.getFromIndex());
-            //     addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
-            //     addToBitboard(GameInfo.getSideToPlay(), move.getFromIndex());
-                
-            //     // put highlighting to previous move and terminate to regular play
-            //     BoardOverlayGraphic.highlightMove(MoveRecord.peekMove());
-            //     Promotion.terminatePromotion();
-            //     ControllerMain.redrawBoard();
-            // } else {
-            //     if(move.isCapture()) {
-            //         removeEnemy(move);
-            //     }
-
-            //     addToBitboard(GameInfo.getSideToPlay() + move.getPromotionSelected(), move.getToIndex()); // add selected self piece
-            //     addToBitboard(GameInfo.getSideToPlay(), move.getToIndex());
-            //     addToBitboard("occupied", move.getToIndex());
-
-            //     Promotion.endPromotion();
-            //     ControllerMain.redrawBoard();
-            // }
-        // } else if(Move.isEnPassant(move)) {
-            // move.setPieceCaptured(GameInfo.getSideToWait() + "Pawn");
-
-        //     removeFromBitboard(GameInfo.getSideToWait(), Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
-        //     removeFromBitboard(GameInfo.getSideToWait() + "Pawn", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
-        //     removeFromBitboard("occupied", Convert.bitIndexShiftBySide(GameInfo.getSideToPlay(), Move.getToIndex(move), -8));
-
-        //     advanceSelf(move);
-        // } else {
-        //     if(Move.isCapture(move)) {
-        //         removeEnemy(move);
-        //     }
-
-        //     advanceSelf(move);
-        // }
     }
 
     public static void setEnPassant(int index) {
@@ -243,40 +193,6 @@ public class Bitboard {
         bitboard.put("ep", 0x0L);
     }
 
-    public static long getRookMask(int idx) {
-        if (idx < 0 || idx >= 64) {
-            throw new IllegalArgumentException("Index must be between 0 and 63.");
-        }
-
-        int row = idx / 8;
-        int col = idx % 8;
-
-        long rowMask = 0xFFL << (row * 8);
-        long colMask = 0x0101010101010101L << col;
-        
-        long finalMask = (rowMask | colMask);
-
-        if(row != 0) {
-            finalMask &= ~bitboard.get("1Rank");
-        }
-
-        if(row != 7) {
-            finalMask &= ~bitboard.get("8Rank");
-        }
-
-        if(col != 0) {
-            finalMask &= ~bitboard.get("aFile");
-        }
-
-        if(col != 7) {
-            finalMask &= ~bitboard.get("hFile");
-        }
-
-        finalMask = Bit.clearBit(finalMask, idx);
-
-        return finalMask;
-    }
-
     private static void advanceSelf(short move) {
         updateBitboard(BoardLookup.getPieceByBitIndex(Move.getFromIndex(move)), Move.getFromIndex(move), Move.getToIndex(move)); // add self piece 
         updateBitboard(GameInfo.getTurn(), Move.getFromIndex(move), Move.getToIndex(move)); // add self side
@@ -285,8 +201,8 @@ public class Bitboard {
 
     private static void removeOpponent(short move) {
         if(Move.isEnPassant(move)) {
-            removeFromBitboard(BoardLookup.getPieceByBitIndex((byte) Offset.behind(Move.getToIndex(move))), Offset.behind(Move.getToIndex(move)));
-            removeFromBitboard(GameInfo.getOpponent(), Offset.behind(Move.getToIndex(move)));
+            removeFromBitboard(BoardLookup.getPieceByBitIndex((byte) Offset.behind(Move.getToIndex(move))), Offset.behind(Move.getToIndex(move))); // piece
+            removeFromBitboard(GameInfo.getOpponent(), Offset.behind(Move.getToIndex(move))); // side
         } else {
             removeFromBitboard(BoardLookup.getPieceByBitIndex(Move.getToIndex(move)), Move.getToIndex(move)); // piece
             removeFromBitboard(GameInfo.getOpponent(), Move.getToIndex(move)); // side
@@ -301,8 +217,9 @@ public class Bitboard {
         if(Move.isEnPassant(move)) {
             addToBitboard("empty", Offset.behind(Move.getToIndex(move)));
         }
-
-        bitboard.put("occupied", ~bitboard.get("empty")); // occupied is the negation of empty
+        
+        // occupied is the negation of empty
+        bitboard.put("occupied", ~bitboard.get("empty")); 
     }
 
     private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {
@@ -318,6 +235,7 @@ public class Bitboard {
         bitboard.put(key, Bit.setBit(bitboard.get(key), bitIndexToAdd));
     }
 
+    // for use only when we know failure is okay and should result in a new bitboard being created
     private static void safeAddToBitboard(String key, int index) {
         if(bitboard.get(key) == null) {
             bitboard.put(key, 0x0L);
