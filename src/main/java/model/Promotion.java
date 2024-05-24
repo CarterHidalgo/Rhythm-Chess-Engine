@@ -36,7 +36,7 @@ public class Promotion {
         // MoveRecord.pushMove(promotionMove);
         GameInfo.setGameState("play");
         // GameInfo.setPieceSelected("none");
-        GameInfo.flipMove();
+        GameInfo.nextTurn();
 
         ignoreInitial = true;
         // promotionMove = null;

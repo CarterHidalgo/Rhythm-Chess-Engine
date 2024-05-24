@@ -1,15 +1,15 @@
-package model;
+// package model;
 
-import helper.Convert;
+// import helper.Convert;
 
-public class MoveValidation {
+// public class MoveValidation {
 
 
-    public static boolean legalListContains(short move) {
-        return true;
-    }
+    // public static boolean legalListContains(short move) {
+    //     return true;
+    // }
 
-    public static boolean consider(short move) {
+    // public static boolean consider(short move) {
         // if(Move.getToIndex(move) < 0 || Move.getToIndex(move) > 63) {
         //     return false;
         // }
@@ -46,11 +46,11 @@ public class MoveValidation {
         // System.out.println("Error in MoveValidation.java -> consider(Move move): Should have returned a value");
         // System.exit(1);
 
-        return false;
-    }
+    //     return false;
+    // }
 
-    private static boolean validatePawn(Move move) {
-        return true;
+    // private static boolean validatePawn(Move move) {
+        // return true;
 
         // if(move.getOffset() == 7 || move.getOffset() == 9) {
         //     if(Convert.bitboardIsSet(GameInfo.getSideToWait(), move.getToIndex())) {
@@ -91,10 +91,10 @@ public class MoveValidation {
         // }
 
         // return false;
-    }
+    // }
 
-    private static boolean validateKnight(Move move) {
-        return true;
+    // private static boolean validateKnight(Move move) {
+        // return true;
 
         // Long offeredMoveMask = 1L << move.getToIndex();
 
@@ -107,25 +107,25 @@ public class MoveValidation {
         // } else {
         //     return false;
         // }
-    }
+    // }
 
-    private static boolean validateBishop(Move move) {
+    // private static boolean validateBishop(Move move) {
         
-        return true;
-    }
+    //     return true;
+    // }
 
-    private static boolean validateRook(Move move) {
+    // private static boolean validateRook(Move move) {
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private static boolean validateQueen(Move move) {
+    // private static boolean validateQueen(Move move) {
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    private static boolean validateKing(Move move) {
+    // private static boolean validateKing(Move move) {
 
-        return true;
-    }
-}
+    //     return true;
+    // }
+// }

@@ -1,7 +1,7 @@
-package model;
+package model.attacks;
 
 public class KnightAttacks {
-    private static final Long[] KNIGHT_ATTACKS = {
+    private static final Long[] POSSIBLE_KNIGHT_ATTACKS = {
         0x20400L, // 0
         0x50800L, // 1
         0xa1100L, // 2
@@ -75,13 +75,12 @@ public class KnightAttacks {
         0x20400000000000L, // 63
     };
 
-    public static Long getKnightAttack(int bitIndex) {
-        if(bitIndex >= 0 && bitIndex <= 63) {
-            return KNIGHT_ATTACKS[bitIndex];
-        } else {
-            System.out.println("Error in KnightAttacks.java -> getKnightAttack(int bitIndex): bitIndex out of range");
-            System.exit(1);
-            return 0x0L;
+    public static Long getKnightToSquareBitboard(int bitIndex) {
+        if(bitIndex < 0 || bitIndex > 63) {
+            bitIndex %= 64;
+            System.out.println("WARNING: bitIndex has been modulated in getKnightAttack() -> KnighAttacks.java");
         }
+
+        return POSSIBLE_KNIGHT_ATTACKS[bitIndex];
     }
 }

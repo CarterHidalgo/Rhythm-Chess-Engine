@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import model.Bitboard;
+import model.BoardLookup;
 import model.GameInfo;
 
 public class PieceGraphic {
@@ -65,7 +66,7 @@ public class PieceGraphic {
     public static void addFadedPieceToStack(float mouseX, float mouseY) {
         setImageCoords(
             Bitboard.getPieceIDFromKey(
-                Bitboard.getKeyFromBitIndex(
+                BoardLookup.getPieceByBitIndex(
                     Convert.mouseToBitIndex(mouseX, mouseY)
                 )
             )

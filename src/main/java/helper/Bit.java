@@ -1,17 +1,6 @@
 package helper;
 
 public class Bit {
-    /*
-     * Bit information:
-     *  BoardLookup codes are stored with even bitIndex -> low order 4 bits
-     *  and odd bitIndex -> high order 4 bits. Note Java prints with the highest
-     *  order bit first, thus in the starting position output is as shown below:
-     * 
-     *          whiteRook   whiteKnight
-     * example  1234        5678
-     * output   56781234
-     */
-
     // BoardLookup piece enumerations
     public static final byte EMPTY = 0b0000; // empty
     public static final byte WHITE_PAWN = 0b0001; // white
@@ -60,6 +49,22 @@ public class Bit {
         return (byte) ((value >> index) & 1);
     }
 
+    public static boolean isSet(byte value, int index) {
+        return ((value >> index) & 1) == 1;
+    }
+
+    public static boolean isSet(short value, int index) {
+        return ((value >> index) & 1) == 1;
+    }
+
+    public static boolean isSet(int value, int index) {
+        return ((value >> index) & 1) == 1;
+    }
+
+    public static boolean isSet(long value, int index) {
+        return ((value >> index) & 1) == 1;
+    }
+
     public static byte getBitRange(byte value, int startIndex, int endIndex) {
         startIndex = Math.max(0, Math.min(8, startIndex));
         endIndex = Math.max(0, Math.min(8, endIndex));
@@ -73,10 +78,6 @@ public class Bit {
         byte shifted = (byte) (value >> startIndex);
         byte mask = (byte) ((1 << (endIndex - startIndex + 1)) - 1);
         byte result = (byte) ((shifted & mask) & 0xFF);
-
-        // System.out.println("given: " + Integer.toBinaryString(value & 0xFF));
-        // System.out.println("range: [" + startIndex + ", " + endIndex + "]");
-        // System.out.println("found: " + Integer.toBinaryString(result) + " or " + result);
 
         return result;
     }
@@ -96,6 +97,8 @@ public class Bit {
 
         return result;
     }
+
+    // int and long getBitRange methods will be created on an as needed basis
 
     public static byte setBit(byte value, int index) {
         byte mask = (byte) (1 << index);
@@ -181,7 +184,7 @@ public class Bit {
         return value;
     }
 
-    // int and long setBitRange methods will be created on an as-needed basis
+    // int and long setBitRange methods will be created on an as needed basis
 
     public static String flagsToString(byte flags) {
         switch(flags) {
@@ -209,5 +212,18 @@ public class Bit {
     public static String toPaddedBinaryString(byte value, int padding) {
         String paddingSize = "%" + String.valueOf(padding) + "s";
         return String.format(paddingSize, Integer.toBinaryString(value)).replace(' ', '0');
+    }
+
+    public static String toPaddedBinaryString(long value, int padding) {
+        String paddingSize = "%" + String.valueOf(padding) + "s";
+        return String.format(paddingSize, Long.toBinaryString(value)).replace(' ', '0');
+    }
+
+    public static boolean hasNextBit(long value) {
+        return value != 0;
+    }
+
+    public static int getNextBitIndex(long value) {
+        return Long.numberOfTrailingZeros(value);
     }
 }

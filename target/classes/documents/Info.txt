@@ -1,0 +1,53 @@
+Updated: 5/13/2024
+On-Branch: 16-bit-moves
+LOC:
+  base
+    App: 35
+    Launcher: 9
+
+  controller
+    BoardMouseHandler: 124
+    ControllerMain: 9
+    MouseEventListner: 34
+
+  helper
+    Bit: 213
+    Convert: 105
+    Debug: 36
+    FEN: 102
+    Printer: 63
+    Vec2: 53
+    Vec3: 56
+    Vec4: 71
+
+  model
+    Bitboard: 238
+    BoardLookup: 75
+    EnPassantSquares: 28
+    GameInfo: 93
+    KnightAttacks: 87
+    ModelMain: 10
+    Move: 144
+    MoveGeneration: 27
+    MoveRecord: 22
+    MoveValidation: 132
+    PlayerMoveInfo: 32
+    Promotion: 54
+
+  view 
+    ViewMain: 37
+
+    board
+      BitboardGraphic: 39
+      BoardGraphic: 128
+      BoardLookupGraphic: 47
+      BoardOverlayGraphic: 100
+      HighPieceGraphic: 83
+      PieceGraphic: 118
+      PromotionGraphic: 217
+    
+    ui 
+      ClockGraphic: 6
+      UserInterface: 23
+
+Total: 2650

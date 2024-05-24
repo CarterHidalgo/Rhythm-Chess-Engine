@@ -1,8 +1,6 @@
 package helper;
 
 import java.util.ArrayList;
-
-import model.Bitboard;
 import model.GameInfo;
 
 public class Convert {
@@ -44,11 +42,11 @@ public class Convert {
     }
 
     public static void cornerToUV() {
-        // TODO: Implement corner to uv conversion
+        
     }
 
     public static void cornerToBitIndex() {
-        // TODO: Implement corner to bit index conversion
+        
     }
 
     public static Vec2 uvToCorner(byte u, byte v) {
@@ -88,18 +86,5 @@ public class Convert {
         }
     
         return corners;
-    }
-
-    // Side should be the side of the piece that will be on the square with bitIndex `value`
-    public static int bitIndexShiftBySide(String side, int value, int offset) {
-        if(side == "white") {
-            return value + offset;
-        } else {
-            return value - offset;
-        }
-    }
-
-    public static boolean bitboardIsSet(String key, int index) {
-        return (Bitboard.getBitboard(key) & (1L << index)) != 0;
     }
 }

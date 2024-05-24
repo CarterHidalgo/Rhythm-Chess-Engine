@@ -8,13 +8,13 @@ public class Printer {
     }
 
     public static void printAllBitboards() {
-        for(String currentKey : Bitboard.keys) {
+        for(String currentKey : Bitboard.pieceKeys) {
             printBitboard(Bitboard.getBitboard(currentKey), "\n" + currentKey);
         }
     }
 
     public static void printAllBitboardsAsLines() {
-        for(String currentKey : Bitboard.keys) {
+        for(String currentKey : Bitboard.pieceKeys) {
             printBitboardAsLine(Bitboard.getBitboard(currentKey), "\n" + currentKey);
             System.out.println();
         }

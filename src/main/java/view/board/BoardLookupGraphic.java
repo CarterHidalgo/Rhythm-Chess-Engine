@@ -32,7 +32,7 @@ public class BoardLookupGraphic {
             if(easyRead) {
                 pieceString = BoardLookup.getPieceByBitIndex(bitIndex);
             } else {
-                // byteString = Bit.toPaddedBinaryString(BoardLookup.getByteCodeByBitIndex(bitIndex), 4);
+                byteString = Bit.toPaddedBinaryString(BoardLookup.getByteCodeByBitIndex(bitIndex), 4);
             }
 
             boardLookupContext.setFill(Color.BLACK);

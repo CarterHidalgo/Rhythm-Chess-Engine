@@ -1,8 +1,9 @@
 package model;
 
 import helper.FEN;
+import helper.Offset;
 import helper.Bit;
-import helper.Printer;
+// import helper.Printer;
 
 public class BoardLookup {
     /*
@@ -32,10 +33,14 @@ public class BoardLookup {
     public static void updateWithMove(short move) {
         setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
         setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
-    }
 
-    private static void setSquare(byte index, String piece) {
-        
+        if(Move.isEnPassant(move)) {
+            setSquare((byte) Offset.behind(Move.getToIndex(move)), Bit.EMPTY);
+        } else if(Move.isCastle(move)) {
+
+        } else if(Move.isPromotion(move)) {
+
+        }
     }
 
     private static void setSquare(byte bitIndex, byte code) {

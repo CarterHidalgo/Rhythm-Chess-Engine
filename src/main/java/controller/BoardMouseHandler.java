@@ -4,8 +4,7 @@ import model.GameInfo;
 import model.PlayerMoveInfo;
 import model.BoardLookup;
 import model.Move;
-import model.MoveRecord;
-import model.MoveValidation;
+import model.MoveGeneration;
 import model.Promotion;
 import model.Bitboard;
 import helper.Convert;
@@ -32,7 +31,11 @@ public class BoardMouseHandler {
             BoardGraphic.pieceClickedByMouse(mouseX, mouseY);
 
             if(Debug.on("C1")) {
-                BitboardGraphic.drawBitboardGraphic(Bitboard.getBitboard(PlayerMoveInfo.getPieceSelected()));
+                BitboardGraphic.drawBitboardGraphic(Bitboard.getBitboard(PlayerMoveInfo.getPieceSelected()), BitboardGraphic.bitboardColor);
+            }
+
+            if(Debug.on("C4")) {
+                BitboardGraphic.drawBitboardGraphic(MoveGeneration.getMoveBitboard(PlayerMoveInfo.getFromIndex()), BitboardGraphic.movesColor);
             }
         } else {
             BoardOverlayGraphic.resetOverlayCanvas();
@@ -55,10 +58,10 @@ public class BoardMouseHandler {
 
         if(!PlayerMoveInfo.getPieceSelected().equals("empty")) {
             short offeredMove = Move.createSimpleMove(PlayerMoveInfo.getFromIndex(), PlayerMoveInfo.getToIndex());
+            short upgradedMove = Move.upgradeSimpleMove(offeredMove);
 
-            // Check to see if the simple move `offeredMove` is in the legal move list 
-            if(MoveValidation.legalListContains(offeredMove)) {
-                Move.updateWithMove(offeredMove);
+            if(Move.isLegalUpgradedMove(upgradedMove)) {
+                Move.updateWithMove(upgradedMove);
             } else if(PlayerMoveInfo.getFromIndex() != PlayerMoveInfo.getToIndex()) {
                 BoardOverlayGraphic.resetOverlayCanvas();
             }
@@ -70,7 +73,7 @@ public class BoardMouseHandler {
             BoardGraphic.drawBoardGraphicByBitboard();
             PlayerMoveInfo.setPieceSelected("empty");
 
-            if(Debug.on("C1")) {
+            if(Debug.on("C1") || Debug.on("C4")) {
                 BitboardGraphic.clearBitboardGraphic();
             }
         }
@@ -89,7 +92,7 @@ public class BoardMouseHandler {
     }
 
     private static boolean isOverSelfPiece(float mouseX, float mouseY) {
-        long pieceLocation = Bitboard.getBitboard((GameInfo.getTurn() == 0) ? "white" : "black");
+        long pieceLocation = Bitboard.getBitboard(GameInfo.getTurn());
         int bitIndex = Convert.mouseToBitIndex(mouseX, mouseY);
         
         if(Debug.on("B1")) {

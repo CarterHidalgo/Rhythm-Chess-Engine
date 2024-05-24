@@ -7,7 +7,6 @@ import helper.Convert;
 import helper.FEN;
 import model.Bitboard;
 import model.GameInfo;
-import model.BoardLookup;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
@@ -74,7 +73,7 @@ public class BoardGraphic {
             BoardLookupGraphic.drawBoardLookupGraphic();
         }
 
-        for(String currentKey : Bitboard.keys) {
+        for(String currentKey : Bitboard.pieceKeys) {
             drawBitboardPieces(Bitboard.getBitboard(currentKey), currentKey);
         }
     }
