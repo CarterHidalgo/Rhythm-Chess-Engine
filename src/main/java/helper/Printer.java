@@ -26,7 +26,7 @@ public class Printer {
         for(int i = 7; i >= 0; i--) {
             for(int j = 0; j < 8; j++) {
                 int currentBit = (int) (bitboard >> (i*8+j) & 1);
-                System.out.print(currentBit);
+                System.out.print((currentBit == 1) ? "1 " : ". ");
             }
             System.out.println();
         }

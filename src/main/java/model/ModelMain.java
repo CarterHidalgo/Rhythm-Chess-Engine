@@ -1,14 +1,16 @@
 package model;
 
+import helper.Debug;
 import helper.FEN;
-import model.magic.MagicBitboard;
+import model.magic.CompactMagicBitboard;
 
 public class ModelMain {
     public static void initModel() {
-        Bitboard.initBitboardsByFEN(FEN.getCurrentFEN());
-        BoardLookup.initBoardLookup();
-        MagicBitboard.init(false);
-        
-        MoveGeneration.generateLegalMoves();
+        if(!Debug.on("F1")) {
+            Bitboard.initBitboardsByFEN(FEN.getCurrentFEN());
+            BoardLookup.initBoardLookup();
+            CompactMagicBitboard.init();
+            MoveGeneration.generateLegalMoves();
+        }
     }
 }

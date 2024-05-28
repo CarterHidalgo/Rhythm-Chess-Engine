@@ -1,5 +1,6 @@
 package base;
 
+import helper.Debug;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -11,10 +12,12 @@ public class App extends Application {
     public void start(Stage stage) {
         ModelMain.initModel();
 
-        stage.setTitle("Java ChessBot Application");
-        stage.setResizable(false);
-        stage.setScene(ViewMain.initView());
-        stage.show();
+        if(!Debug.on("F1")) {
+            stage.setTitle("Java ChessBot Application");
+            stage.setResizable(false);
+            stage.setScene(ViewMain.initView());
+            stage.show();
+        }
 
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
