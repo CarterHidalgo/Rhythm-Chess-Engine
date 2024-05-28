@@ -1,14 +1,13 @@
 package model;
 
+import helper.Bit;
 import helper.FEN;
 import helper.Offset;
-import helper.Bit;
-// import helper.Printer;
 
 public class BoardLookup {
     /*
      * Piece enumeration for BoardLookup array. Note this is NOT the same enumeration
-     * used in PieceGraphic and is separate from it. Enumeration is arbitrary. 
+     * used in PieceGraphic and is separate from it. Enumeration is ultimately arbitrary. 
      * 
      * Bit 0: Color (1 bit)
      *  0: White
@@ -30,6 +29,7 @@ public class BoardLookup {
         FEN.parseFEN(board);
     }
 
+    // only board lookup structures should be updated in this method
     public static void updateWithMove(short move) {
         setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
         setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
@@ -67,8 +67,7 @@ public class BoardLookup {
 
             case Bit.EMPTY: return "empty";
             default: 
-                System.out.println("Impossible bit index | cannot return a piece string in getPieceByBitIndex() -> BoardLookup.java");
-                // System.out.println("code: " + Bit.toPaddedBinaryString(code, 8) + " at " + bitIndex);
+                System.out.println("Impossible bit index | cannot return a piece string in getPieceByBitIndex() -> BoardLookup.java(); shutting down.");
                 System.exit(1);
                 return "";
         }

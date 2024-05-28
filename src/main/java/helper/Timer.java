@@ -47,7 +47,7 @@ public class Timer {
         }
     }
 
-    public static String formatMilliTime(long milliseconds) {
+    private static String formatMilliTime(long milliseconds) {
         long minutes = milliseconds / (60 * 1000);
         long secondsTotal = milliseconds / 1000;
         long seconds = secondsTotal % 60;
@@ -68,7 +68,7 @@ public class Timer {
         return formattedTime.toString();
     }
     
-    public static String formatNanoTime(long nanoseconds) {
+    private static String formatNanoTime(long nanoseconds) {
         long secondsTotal = nanoseconds / 1_000_000_000;
         long remainingNanoseconds = nanoseconds % 1_000_000_000;
         long milliseconds = remainingNanoseconds / 1_000_000;

@@ -1,18 +1,17 @@
 package view.board;
 
 import controller.MouseEventListner;
-import helper.Vec2;
-import helper.Debug;
 import helper.Convert;
-import helper.FEN;
-import model.Bitboard;
-import model.GameInfo;
+import helper.Debug;
+import helper.Vec2;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import model.Bitboard;
+import model.GameInfo;
 
 public class BoardGraphic {
     private static StackPane boardStack = new StackPane();
@@ -26,7 +25,7 @@ public class BoardGraphic {
 
     public static StackPane getFullBoardStack() {
         if(!initialized) {
-            drawBoardGraphicByBitboard();
+            drawBoardGraphic();
         }
 
         boardStack.getChildren().addAll(
@@ -43,29 +42,8 @@ public class BoardGraphic {
 
         return boardStack;
     }
-    
-    public static void drawBoardGraphicByFEN(String fen) {
-        String[] fields = fen.split("\\s+");
-        
-        int file = 0;
-        int rank = 0;
-        char currentChar;
 
-        for(int i = 0; i < fields[0].length(); i++) {
-            currentChar = fields[0].charAt(i);
-            if((currentChar >= 'a' && currentChar <= 'z') || (currentChar >= 'A' && currentChar <= 'Z')) {
-                PieceGraphic.addPieceToStack(FEN.charToPieceID(currentChar), new Vec2(file, rank));
-                file++;
-            } else if(currentChar == '/') {
-                file = 0;
-                rank++;
-            } else {
-                file += currentChar - '0';
-            }
-        }
-    }
-
-    public static void drawBoardGraphicByBitboard() {
+    public static void drawBoardGraphic() {
         PieceGraphic.clearPieceCanvas();
         HighPieceGraphic.clearPieceCanvas();
 

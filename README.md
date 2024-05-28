@@ -1,24 +1,27 @@
-# ChessBot
+# Rhythm Chess Engine
 
-This is a chess application built using Java with Maven and JavaFX. It is currently a work in progress. When completed, the application will allow Computer vs. Computer or Computer vs. Human chess games.
+## About
+This is a bitboard based chess engine coded in Java using Apache Maven and JavaFX. 
 
 ## Prerequisites
-- Java Development Kit (JDK) 21 or higher installed on your system.
+- A browser with a working internet connection
+
+OR
+- Java Development Kit (JDK) 21 or higher installed on your system (offline).
 
 ## How to Play
-- Launch the application by running the CH_ChessBot_Java.jar files
-- Select the players [WIP]
+Online:
+- Click [here](lichess.org) to play the bot on lichess
+
+Offline:
+- Launch the application by downloading and running the .jar file in the root directory
 - Click and drag pieces to begin playing the game.
 
-## Features
-- User-friendly interface with drag-and-drop functionality.
-- Real-time validation of legal moves [WIP].
-- Supports standard chess rules and gameplay [WIP]
-- Offers multiple game and debug settings in the settings menu [WIP]
-
 ## Contributing
-If you find any issues or have suggestions for improvements, you can find my contact information on my LinkedIn page.
+If you find any issues or have suggestions for improvements, you can contact me through my [LinkedIn](www.linkedin.com/in/carter-hidalgo-8bb25216b)
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
 
+##
+*"Rhythm, rhythm, the rhythm of my day."*

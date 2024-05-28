@@ -7,6 +7,7 @@ import helper.Debug;
 import helper.Offset;
 import helper.Timer;
 import model.attacks.KnightAttacks;
+import model.magic.CompactMagicBitboard;
 import model.magic.MagicBitboard;
 
 public class MoveGeneration {
@@ -228,7 +229,7 @@ public class MoveGeneration {
             int fromIndex = Bit.getNextBitIndex(selfBitboard); // get lsb
             byte flags;
 
-            toSquareBitboard = MagicBitboard.getBishopMoves(fromIndex);
+            toSquareBitboard = CompactMagicBitboard.getBishopMoves(fromIndex);
             toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn());
 
             while(Bit.hasNextBit(toSquareBitboard)) {
@@ -259,7 +260,7 @@ public class MoveGeneration {
             int fromIndex = Bit.getNextBitIndex(selfBitboard); // get lsb
             byte flags;
 
-            toSquareBitboard = MagicBitboard.getRookMoves(fromIndex);
+            toSquareBitboard = CompactMagicBitboard.getRookMoves(fromIndex);
             toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn());
 
             while(Bit.hasNextBit(toSquareBitboard)) {
@@ -291,7 +292,7 @@ public class MoveGeneration {
             byte flags;
 
             // queen is the bitwise or of rooks and bishops
-            toSquareBitboard = MagicBitboard.getRookMoves(fromIndex) | MagicBitboard.getBishopMoves(fromIndex);
+            toSquareBitboard = CompactMagicBitboard.getRookMoves(fromIndex) | CompactMagicBitboard.getBishopMoves(fromIndex);
             toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn());
 
             while(Bit.hasNextBit(toSquareBitboard)) {

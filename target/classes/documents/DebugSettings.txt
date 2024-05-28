@@ -2,6 +2,7 @@
 
 A1. Print all bitboards as squares at initialization: false
 A2. Print all bitboards as lines at initialization: false
+A3. Print magic bitboard memory footprint: false
 
 >> Player Interaction With Board 
 
@@ -11,7 +12,6 @@ B3. Print mouse coordinates as doubles when board is clicked: false
 B4. Print mouse coordinates as u and v integers when board is clicked: false
 B5. Print mouse coordinates as bit index into piece location bitboard when board is clicked: false
 B6. Print a message if the clicked square holds a home color piece: false
-B7. Print all move info after each move: false
 
 >> Board Graphics
 
@@ -28,5 +28,9 @@ D2. Print all legal moves on any generation: false
 >> Timer 
 
 E1. Timer for initializing bitboards: false
-E2. Placeholder for future timers: false
+E2. Placeholder for future setting: false
 E3. Timer for generate legal moves: false
+
+>> GUI Initialization
+
+F1. Turn off GUI: false

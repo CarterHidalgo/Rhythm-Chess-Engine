@@ -1,7 +1,7 @@
 package helper;
 
-import model.GameInfo;
 import model.Bitboard;
+import model.GameInfo;
 
 public class Offset {
     /*

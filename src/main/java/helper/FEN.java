@@ -3,13 +3,14 @@ package helper;
 public class FEN {
     private static final String[] FEN_STRINGS = {
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // [0] Starting position
-        "8/8/2R5/8/8/5B2/8/8 w - - 0 1", // [1] Rook magic bitboard test 
-        "2r1B3/1p1p4/p1Q2RpP/n7/8/2B2p2/6P1/7R w - - 0 1", // [2] queen magic bitboard test
-        "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ", // [3] Position 2 (https://www.chessprogramming.org/Perft_Results)
-        "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ", // [4] Position 5 (ibid)
-        "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", // [5] Position 6 (ibid)
+        "8/4p3/8/1pppR1p1/4p3/4p3/4p3/8 w - - 0 1", // [1] Rook magic bitboard test 
+        "7B/8/8/8/8/8/8/B7 w - - 0 1", // [2] Bishop magic bitboard test
+        "2r1B3/1p1p4/p1Q2RpP/n7/8/2B2p2/6P1/7R w - - 0 1", // [3] queen magic bitboard test
+        "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ", // [4] Perft Position 2 (https://www.chessprogramming.org/Perft_Results)
+        "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ", // [5] Perft Position 5 (ibid)
+        "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", // [6] Perft Position 6 (ibid)
     };
-    private static String currentFEN = FEN_STRINGS[0];
+    private static String currentFEN = FEN_STRINGS[6];
 
     public static String getStartingFEN() {
         return FEN_STRINGS[0];
@@ -111,13 +112,13 @@ public class FEN {
 
     public static String getPieceString(char piece) {
         switch (piece) {
-            case 'P': return "whitePawn"; // white
+            case 'P': return "whitePawn";
             case 'N': return "whiteKnight";
             case 'B': return "whiteBishop";
             case 'R': return "whiteRook";
             case 'Q': return "whiteQueen";
             case 'K': return "whiteKing";
-            case 'p': return "blackPawn"; // black
+            case 'p': return "blackPawn"; 
             case 'n': return "blackKnight";
             case 'b': return "blackBishop";
             case 'r': return "blackRook";

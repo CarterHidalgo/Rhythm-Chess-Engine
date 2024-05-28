@@ -30,10 +30,20 @@ public class Move {
      * 
      */
 
+
+    /*
+     * Note: It is not the job of the Move class to determine what TYPE of move a move is. 
+     *  Moves will either be simple (i.e. flags = 0000) or the correct flag will be provided.
+     *  It is the responsibility of the MoveGeneration class to create moves and to assign
+     *  the correct flags to those moves by calling createMove().
+     */
+    
+    // creates a move with a fromIndex and a toIndex but with no flags set (for speed)
     public static short createSimpleMove(byte fromIndex, byte toIndex) {
         return (short) ((toIndex << 6) | fromIndex);
     }
 
+    // creates a move using the provided fromIndex, toIndex, and flags
     public static short createMove(byte fromIndex, byte toIndex, byte flags) {
         short move = (short) ((toIndex << 6) | fromIndex);
 

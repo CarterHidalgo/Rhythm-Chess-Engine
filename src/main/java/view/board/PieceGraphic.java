@@ -13,7 +13,7 @@ public class PieceGraphic {
     /*
      * Piece ennumeration order is based on the order in pieces.png to make it easier to set
      * the image coordinates in setImageCoords(). Note this enumeration is NOT the same as
-     * the enumeration used in BoardLookup
+     * the enumeration used in BoardLookup. Enumeration is ultimately arbitrary.
      * 
      * None: 0
      * King: 1

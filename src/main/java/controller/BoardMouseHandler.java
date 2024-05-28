@@ -1,16 +1,16 @@
 package controller;
 
-import model.GameInfo;
-import model.PlayerMoveInfo;
-import model.BoardLookup;
-import model.Move;
-import model.MoveGeneration;
-import model.Promotion;
-import model.Bitboard;
 import helper.Convert;
 import helper.Debug;
 import helper.Printer;
 import helper.Vec2;
+import model.Bitboard;
+import model.BoardLookup;
+import model.GameInfo;
+import model.Move;
+import model.MoveGeneration;
+import model.PlayerMoveInfo;
+import model.Promotion;
 import view.board.BitboardGraphic;
 import view.board.BoardGraphic;
 import view.board.BoardOverlayGraphic;
@@ -68,9 +68,9 @@ public class BoardMouseHandler {
 
             /*
              * In either case the piece has been released and the board must be either
-             * reset or updated by drawing according to bitboards
+             * reset or updated by re-drawing
              */
-            BoardGraphic.drawBoardGraphicByBitboard();
+            BoardGraphic.drawBoardGraphic();
             PlayerMoveInfo.setPieceSelected("empty");
 
             if(Debug.on("C1") || Debug.on("C4")) {

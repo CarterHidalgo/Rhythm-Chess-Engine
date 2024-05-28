@@ -1,6 +1,8 @@
 package model.attacks;
 
 public class KnightAttacks {
+    // Hardcode all possible squares a knight can attack from any given square to avoid board falloff computation on the fly
+
     private static final Long[] POSSIBLE_KNIGHT_ATTACKS = {
         0x20400L, // 0
         0x50800L, // 1

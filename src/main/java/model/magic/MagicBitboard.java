@@ -5,26 +5,28 @@ import java.util.Random;
 
 import helper.Bit;
 import helper.Coord;
-import helper.Printer;
+import helper.Memory;
 import model.Bitboard;
 
 public class MagicBitboard {
     /*
-     * ABOUT: 
-     *  An implementation of fancy magic bitboards with individual shifts and no constructive collision 
-     *  optimization. 
-     * 
-     * DEFINE
-     *  blockerSet: An in-order set of all possible configurations of blockers for a given square/piece combination
-     *      Border squares are excluded since blockers are always attacked and blockers can only change the square
-     *      behind them.
-     *  config: A specific configuration of blockers pulled from a blockerSet.
-     *  attackSet: An in-order set of all possible configuations of attacks given a square/piece/config combination.
-     *  attack: A specific bitboard of possible attacks pulled from the attackSet.
-     *  major: A boolean value where true represents rook movement and false represents bishop movement.
-     *  base-magics: Magic numbers where the resulting 1D array of attacks = blockerSet.length
-     *      (in other words every config maps to a unique index and many attack maps are redundently stored)
-     */
+    ABOUT
+     [Legacy Class] now using CompactMagicBitboards.java
+     
+     A fancy variable shift magic bitboard implementation with direct attack storage in the lookup table
+     Memory footprint of 861 KB or 841 KiB for rook and bishop combined. 
+
+    DEFINE
+     - blockerSet: An in-order set of all possible configurations of blockers for a given square/piece combination
+        Border squares are excluded since blockers are always attacked and blockers can only change the square
+        behind them.
+     - config: A specific configuration of blockers pulled from a blockerSet.
+     - attackSet: An in-order set of all possible configuations of attacks given a square/piece/config combination.
+     - attack: A specific bitboard of possible attacks pulled from the attackSet.
+     - major: A boolean value where true represents rook movement and false represents bishop movement.
+     - base-magics: Magic numbers where the resulting 1D array of attacks = blockerSet.length
+        (in other words every config maps to a unique index and many attacks are redundently stored)
+    */
 
     private static final Random random = new Random();
     private static final int rookSize = 102400; // portion of table that is for rooks in bytes
@@ -68,7 +70,7 @@ public class MagicBitboard {
             createTable(square, MagicNumbers.BISHOP_MAGICS[square], bishopShift[square], false);
         }
 
-        printTableSize(table);
+        System.out.println("MagicBitboard memory footprint: " + Memory.sizeInKilobytes(table) + " KB");
     }
 
     public static long getRookMoves(int square) {
@@ -155,7 +157,7 @@ public class MagicBitboard {
                 continue;
             }
             
-            // skip if "unsuitable" magic was generated
+            // skip if "unsuitable" magic was generated (must have at least 6 bits generated to be valid)
             if(Long.bitCount((mask * magic) & 0xFF00000000000000L) < 6) {
                 continue;
             }
@@ -202,10 +204,7 @@ public class MagicBitboard {
     }
 
     private static int transform(long config, long magic, int shift) {
-        long mul = config * magic;
-        long result = mul >>> (shift);
-        
-        return (int) (result & 0xFFFFFFFFL);
+        return (int) (((config * magic) >>> (shift)) & 0xFFFFFFFFL);
     }
 
     private static long[] createBlockerSet(long mask) {
@@ -228,23 +227,23 @@ public class MagicBitboard {
         return blockerBitboards;
     }
 
-    private static long[] createAttackSet(int index, long[] blockerSet, boolean major) {
+    private static long[] createAttackSet(int square, long[] blockerSet, boolean major) {
         long[] attackSet = new long[blockerSet.length];
         int attackIndex = 0;
 
         for(long config : blockerSet) {
-            attackSet[attackIndex++] = createAttack(index, config, major);
+            attackSet[attackIndex++] = createAttack(square, config, major);
         }
 
         return attackSet;
     }
 
-    private static long createAttack(int index, long config, boolean major) {
+    private static long createAttack(int square, long config, boolean major) {
         // Create an attack bitboard for a given square, specific blocker config, and a piece major
         long attack = 0;
 
         Coord[] directions = (major) ? Coord.rookDirections : Coord.bishopDirections;
-        Coord startSquare = new Coord(index);
+        Coord startSquare = new Coord(square);
         
         for(Coord dir : directions) {
             for(int dist = 1; dist < 8; dist++) {
@@ -280,35 +279,4 @@ public class MagicBitboard {
     private static long randomSparseLong() {
         return randomLong() & randomLong();
     }
-
-    private static void printTableSize(long[] array) {
-        long sizeInBytes = (array.length * 8 + 12) + ((array.length * 8 + 12) % 8);
-        double sizeInKilobytes = sizeInBytes / 1000.0;
-        double sizeInMegabytes = sizeInKilobytes / 1_000_000.00;
-        
-        if(sizeInMegabytes >= 1) {
-            System.out.printf("Size of the table: %.2f MB%n", sizeInMegabytes);
-        } else if (sizeInKilobytes >= 1) {
-            System.out.printf("Size of the table: %.2f KB | %.2f KiB%n", sizeInKilobytes, (sizeInKilobytes / 1.024));
-        } else {
-            System.out.printf("Size of the table: %d bytes%n", sizeInBytes);
-        }
-    }
 }
-
-/*
-
-For square 63
-...............
-Previous best: 4096
-New best: 2304
-Magic: 1200772246015809234
-.........................
-Previous best: 2304
-New best: 2176
-Magic: -6227352389551664102
-
-
-
-
- */

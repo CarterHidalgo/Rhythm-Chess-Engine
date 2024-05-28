@@ -2,14 +2,14 @@ package helper;
 
 public class Bit {
     // BoardLookup piece enumerations
-    public static final byte EMPTY = 0b0000; // empty
-    public static final byte WHITE_PAWN = 0b0001; // white
+    public static final byte EMPTY = 0b0000;
+    public static final byte WHITE_PAWN = 0b0001; 
     public static final byte WHITE_KNIGHT = 0b0010;
     public static final byte WHITE_BISHOP = 0b0011;
     public static final byte WHITE_ROOK = 0b0100;
     public static final byte WHITE_QUEEN = 0b0101;
     public static final byte WHITE_KING = 0b0110;
-    public static final byte BLACK_PAWN = 0b1001; // black
+    public static final byte BLACK_PAWN = 0b1001;
     public static final byte BLACK_KNIGHT = 0b1010;
     public static final byte BLACK_BISHOP = 0b1011;
     public static final byte BLACK_ROOK = 0b1100;
