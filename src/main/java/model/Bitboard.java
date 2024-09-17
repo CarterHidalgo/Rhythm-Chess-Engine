@@ -9,6 +9,7 @@ import helper.FEN;
 import helper.Offset;
 import helper.Printer;
 import helper.Timer;
+import model.attacks.KingAttacks;
 
 public class Bitboard {
     // a list of all bitboards used to track pieces (i.e. whiteKnight or blackBishop)
@@ -95,7 +96,6 @@ public class Bitboard {
         }
         bitboard.put("ep", 0x0L);
 
-
         // static bitboards
         // Note: I am currently ignoring the possibility that the player may choose to play as black, thus swapping white and black
         bitboard.put("whitePawnStart", 0xFF00L);
@@ -109,6 +109,49 @@ public class Bitboard {
         bitboard.put("hFile", 0x8080808080808080L);
         bitboard.put("1Rank", 0xFFL);
         bitboard.put("8Rank", 0xFF00000000000000L);
+
+        // precomputed rank, file, major and minor diagonal masks used for limiting pinned pieces
+        for(rank = 0; rank < 8; rank++) {
+            bitboard.put("rank" + rank, 0xFFL << (rank * 8));
+        }
+
+        long fileMask = 0;
+        for(file = 0; file < 8; file++) {
+            fileMask = 0;
+            for(rank = 0; rank < 8; rank++) {
+                fileMask |= (1L << (rank * 8 + file));
+            }
+            bitboard.put("file" + file, fileMask);
+        }
+
+        /* 
+            This approach to diagonals technically stores an extra 4 masks that will not be used - you 
+            must have at least 3 squares available for a pin to exist (pinning piece -> pinned piece - > king) 
+            however the lost space is negligable and it makes naming more annoying so I am choosing to ignore this 
+        */
+        long majorMask = 0;
+        for(byte diagonal = -7; diagonal <= 7; diagonal++) {
+            majorMask = 0;
+            for(rank = 0; rank < 8; rank++) {
+                file = (byte) (rank - diagonal);
+                if(file >= 0 && file < 8) {
+                    majorMask |= (1L << (rank * 8 + file));
+                }
+            }
+            bitboard.put("major" + (diagonal + 7), majorMask);
+        }
+                    
+        long minorMask = 0;
+        for(byte diagonal = 0; diagonal <= 14; diagonal++) {
+            minorMask = 0;
+            for(rank = 0; rank < 8; rank++) {
+                file = (byte) (diagonal - rank);
+                if(file >= 0 && file < 8) {
+                    minorMask |= (1L << (rank * 8 + file));
+                }
+            }
+            bitboard.put("minor" + diagonal, minorMask);
+        }
 
         // Debugging info
         if(Debug.on("E1")) {
@@ -130,11 +173,20 @@ public class Bitboard {
 
     public static long getBitboard(String key) {
         if(bitboard.get(key) == null) {
-            System.out.println("Failed to retrieve \"" + key + "\" bitboard in Bitboard.java; shutting down");
+            System.out.println("Failed to retrieve \"" + key + "\" bitboard in Bitboard.java -> getBitboard(); shutting down");
             System.exit(1);
         }
 
         return bitboard.get(key);
+    }
+
+    public static void setBitboard(String key, long value) {
+        if(bitboard.get(key) == null) {
+            System.out.println("Failed to retrieve \"" + key + "\" bitboard in Bitboard.java -> setBitboard(); shutting down");
+            System.exit(1);
+        }
+
+        bitboard.put(key, value);
     }
 
     public static int getPieceIDFromKey(String key) {
@@ -175,14 +227,51 @@ public class Bitboard {
         return ID;
     }
 
-    // only bitboards should be updated in this method
+    // only and all bitboards should be updated in this method
     public static void updateWithMove(short move) {
+        clearEnPassant();
+        
         if(Move.isCapture(move)) {
             removeOpponent(move);
         }
 
+        if(Move.isDoublePawnPush(move)) {            
+            setEnPassant(Offset.behind(Move.getToIndex(move)));
+        }
+
+        if(Move.isPromotion(move)) {
+            removeFromBitboard(BoardLookup.getPieceByBitIndex(Move.getToIndex(move)), Move.getToIndex(move));
+        }
+
+        if(Move.isKing(move)) {
+            KingAttacks.setSelfKingIndex(Move.getToIndex(move));
+        }
+
         advanceSelf(move);
         updateNeutrals(move);
+    }
+
+    public static long getLineMask(int square1, int square2) {
+        // rank and file could be from square1 or square2. It doesn't matter because they are only used if a line-relationship is found
+        int rank = square1 / 8;
+        int file = square1 % 8;
+
+        switch(Offset.getSquareRelationship(square1, square2)) {
+            case 0:
+                return Bitboard.getBitboard("rank" + rank);
+            case 1:
+                return Bitboard.getBitboard("file" + file);
+            case 2:
+                return Bitboard.getBitboard("major" + (rank - file + 7));
+            case 3:
+                return Bitboard.getBitboard("minor" + (rank + file));
+            default:
+                return 0;
+        }
+    }
+
+    public static long getSlidingPieces(String side) {
+        return (bitboard.get(side + "Bishop") | bitboard.get(side + "Rook") | bitboard.get(side + "Queen"));
     }
 
     public static void setEnPassant(int index) {
@@ -193,8 +282,22 @@ public class Bitboard {
         bitboard.put("ep", 0x0L);
     }
 
+    public static void hide(String key, int index) {
+        Bitboard.setBitboard(key, Bit.clearBit(Bitboard.getBitboard(key), index));
+    }
+
+    public static void restore(String key, int index) {
+        Bitboard.setBitboard(key, Bit.setBit(Bitboard.getBitboard(key), index));
+    }
+
     private static void advanceSelf(short move) {
-        updateBitboard(BoardLookup.getPieceByBitIndex(Move.getFromIndex(move)), Move.getFromIndex(move), Move.getToIndex(move)); // add self piece 
+        if(Move.isPromotion(move)) {
+            addToBitboard(Move.getKeyFromFlag(move), Move.getToIndex(move)); // add self piece (promotion case)
+            removeFromBitboard(BoardLookup.getPieceByBitIndex(Move.getFromIndex(move)), Move.getFromIndex(move));
+        } else {
+            updateBitboard(BoardLookup.getPieceByBitIndex(Move.getFromIndex(move)), Move.getFromIndex(move), Move.getToIndex(move)); // add self piece 
+        }
+
         updateBitboard(GameInfo.getTurn(), Move.getFromIndex(move), Move.getToIndex(move)); // add self side
         updateBitboard("occupied", Move.getFromIndex(move), Move.getToIndex(move)); // add occupied
     }

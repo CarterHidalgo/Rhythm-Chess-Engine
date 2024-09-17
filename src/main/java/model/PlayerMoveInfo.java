@@ -34,4 +34,10 @@ public class PlayerMoveInfo {
     public static byte getToIndex() {
         return toIndex;
     }
+
+    public static void print() {
+        System.out.println("\npieceSelected: " + pieceSelected + 
+        "\nfromIndex: " + String.valueOf(fromIndex) + 
+        "\ntoIndex: " + String.valueOf(toIndex));
+    }
 }

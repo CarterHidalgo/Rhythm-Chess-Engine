@@ -4,7 +4,14 @@ public class GameInfo {
     private static boolean debug = true; // set to false to manually override all debug settings to off
 
     // Allowed Game States: [play, pause, promote, checkmate]
-    private static String gameState = "play";
+    private static final String[] allowedGameStates = {
+        "play",
+        "pause",
+        "pre-promote",
+        "post-promote",
+        "checkmate",
+    };
+    private static String gameState = allowedGameStates[0];
 
     /*
      * DEFINE:
@@ -15,6 +22,7 @@ public class GameInfo {
     private static short move = 0; // initially no moves have been played
     private static boolean turn = false; // initially white has the first turn
     private static boolean side = false; // initially player defaults to white
+    private static boolean hasHuman = true; // indicates a human is playing using the GUI 
     
     // GUI consts
     private static final int BOARD_LENGTH = 800;
@@ -33,6 +41,10 @@ public class GameInfo {
         return (turn) ? "black" : "white";
     }
 
+    public static String getOppositeTurn() {
+        return (turn) ? "white" : "black";
+    }
+
     public static String getOpponent() {
         return (turn) ? "white" : "black";
     }
@@ -45,8 +57,8 @@ public class GameInfo {
         side = !side;
     }
 
-    public static boolean getSide() {
-        return side;
+    public static String getSide() {
+        return (side) ? "black" : "white";
     }
 
     public static boolean debug() {
@@ -69,16 +81,45 @@ public class GameInfo {
         return UI_LENGTH;
     }
 
+    public static void setGameState(String newGameState) {
+        for(String s : allowedGameStates) {
+            if(s.equals(newGameState)) {
+                gameState = newGameState;
+                return;
+            }
+        }
+
+        System.out.println("Error in GameInfo.java -> setGameState(String newGameState): Attempted to set an invalid game state; shutting down.");
+        System.exit(1);
+    }
+
     public static String getGameState() {
         return gameState;
     }
 
-    public static void setGameState(String newGameState) {
-        gameState = newGameState;
-
-        if(gameState != "play" && gameState != "pause" && gameState != "promote" && gameState != "checkmate") {
-            System.out.println("Error in GameInfo.java -> setGameState(String newGameState): Attempted to set an invalid game state; shutting down.");
-            System.exit(1);
+    public static boolean stateIs(String s) {
+        for(String state : allowedGameStates) {
+            if(state.equals(s)) {
+                return s.equals(gameState);    
+            }
         }
+
+        System.out.println("WARNING: \"" + s + "\" was not found in the allowed game states");
+        return false;
+    }
+
+    public static boolean stateIsNot(String s) {
+        for(String state : allowedGameStates) {
+            if(state.equals(s)) {
+                return !s.equals(gameState);    
+            }
+        }
+
+        System.out.println("WARNING: \"" + s + "\" was not found in the allowed game states");
+        return false;
+    }
+
+    public static boolean hasHuman() {
+        return hasHuman;
     }
 }

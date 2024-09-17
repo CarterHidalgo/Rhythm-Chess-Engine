@@ -10,7 +10,6 @@ import model.GameInfo;
 import model.Move;
 import model.MoveGeneration;
 import model.PlayerMoveInfo;
-import model.Promotion;
 import view.board.BitboardGraphic;
 import view.board.BoardGraphic;
 import view.board.BoardOverlayGraphic;
@@ -19,7 +18,8 @@ import view.board.PromotionGraphic;
 
 public class BoardMouseHandler {
     public static void handleMousePressed(float mouseX, float mouseY) {
-        if(GameInfo.getGameState() == "promote") {
+        // promotion events are handled in Promotion.java and PromotionGraphic.java
+        if(GameInfo.stateIs("pre-promote")) {
             return;
         }
         
@@ -43,23 +43,37 @@ public class BoardMouseHandler {
     }
 
     public static void handleMouseDragged(float mouseX, float mouseY) {
+        if(GameInfo.stateIs("pre-promote")) {
+            return;
+        }
+
         if(!PlayerMoveInfo.getPieceSelected().equals("empty")) {
             HighPieceGraphic.updateWhenDragged(mouseX, mouseY);
         }
     }
 
     public static void handleMouseReleased(float mouseX, float mouseY) {
-        if(GameInfo.getGameState() == "promote") {
-            return;
+        // do not update board overlay graphic or last player move info when in promotion-limbo
+        if(!GameInfo.stateIs("pre-promote")) {
+            BoardOverlayGraphic.updateOverlayCanvas(mouseX, mouseY);
+            PlayerMoveInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
         }
-
-        BoardOverlayGraphic.updateOverlayCanvas(mouseX, mouseY);
-        PlayerMoveInfo.setToIndex(Convert.mouseToBitIndex(mouseX, mouseY));
-
+        
+        // we can simply check for non-emptiness because opponent pieces are filtered out in handleMousePressed
         if(!PlayerMoveInfo.getPieceSelected().equals("empty")) {
+            /*
+            * We are already calculating flags for moves in the MoveGeneration. To avoid
+            * re-calculating flags when we create an offeredMove from the player we 
+            * instead create a "simple move" which is a move with the 0000 flag. We then
+            * "upgrade" this move by searching through the already calculated legal move
+            * list in MoveGeneration and see if there is a matching move (excepting the flags).
+            * If there is, we "upgrade" the offered simple move by returning the full move
+            * from the legal move list. If not, we return the "null" move (16 zeros).
+            */
+            
             short offeredMove = Move.createSimpleMove(PlayerMoveInfo.getFromIndex(), PlayerMoveInfo.getToIndex());
             short upgradedMove = Move.upgradeSimpleMove(offeredMove);
-
+            
             if(Move.isLegalUpgradedMove(upgradedMove)) {
                 Move.updateWithMove(upgradedMove);
             } else if(PlayerMoveInfo.getFromIndex() != PlayerMoveInfo.getToIndex()) {
@@ -71,7 +85,9 @@ public class BoardMouseHandler {
              * reset or updated by re-drawing
              */
             BoardGraphic.drawBoardGraphic();
-            PlayerMoveInfo.setPieceSelected("empty");
+            if(!GameInfo.stateIs("pre-promote")) {
+                PlayerMoveInfo.setPieceSelected("empty");
+            }
 
             if(Debug.on("C1") || Debug.on("C4")) {
                 BitboardGraphic.clearBitboardGraphic();
@@ -80,13 +96,11 @@ public class BoardMouseHandler {
     }
 
     public static void handleMouseClicked(float mouseX, float mouseY) {
-        if(GameInfo.getGameState() == "promote") {
-            Promotion.handlePieceSelection();
-        }
+        // implement on an as-needed basis
     }
 
     public static void handleMouseMoved(float mouseX, float mouseY) {
-        if(GameInfo.getGameState() == "promote") {
+        if(GameInfo.stateIs("pre-promote")) {
             PromotionGraphic.handleMouseOverCard(mouseX, mouseY);
         }
     }

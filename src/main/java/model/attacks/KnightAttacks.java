@@ -3,7 +3,7 @@ package model.attacks;
 public class KnightAttacks {
     // Hardcode all possible squares a knight can attack from any given square to avoid board falloff computation on the fly
 
-    private static final Long[] POSSIBLE_KNIGHT_ATTACKS = {
+    private static final Long[] KNIGHT_ATTACKS = {
         0x20400L, // 0
         0x50800L, // 1
         0xa1100L, // 2
@@ -77,12 +77,12 @@ public class KnightAttacks {
         0x20400000000000L, // 63
     };
 
-    public static Long getKnightToSquareBitboard(int bitIndex) {
-        if(bitIndex < 0 || bitIndex > 63) {
-            bitIndex %= 64;
-            System.out.println("WARNING: bitIndex has been modulated in getKnightAttack() -> KnighAttacks.java");
+    public static Long getKnightAttacks(int square) {
+        if(square < 0 || square > 63) {
+            square %= 64;
+            System.out.println("WARNING: square has been modulated in getKnightAttacks() -> KnightAttacks.java");
         }
 
-        return POSSIBLE_KNIGHT_ATTACKS[bitIndex];
+        return KNIGHT_ATTACKS[square];
     }
 }

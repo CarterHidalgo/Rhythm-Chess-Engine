@@ -11,11 +11,11 @@ import model.Bitboard;
 
 public class CompactMagicBitboard {
     /*
-
     COMPACTING SCHEME 
-    (credit Robert Houdart from Houdini see 
-    https://www.talkchess.com/forum/viewtopic.php?topic_view=threads&p=368026&t=35858)
+    (scheme credit Robert Houdart from Houdini see 
+    https://www.talkchess.com/forum/viewtopic.php?topic_view=threads&p=368026&t=35858 for original post)
 
+    HOW I UNDERSTOOD/IMPLEMENTED IT
     Number of unique rook attacks by square
         A   B   C   D   E   F   G   H
     -----------------------------------
@@ -85,7 +85,9 @@ public class CompactMagicBitboard {
     can be reduced, further shrinking the resulting memory footprint. In particular, most squares in
     the top two ranks for rooks can be successfully represented with 1 less bit per square than bits in their
     respective masks while bishops have several groupings spread throughout the board with the same 
-    reduction feature. 
+    reduction feature. This further compacting scheme has not been implemented since it would only reduce
+    the table size by a few kilobytes and the table is already small enough to fit entirely inside my
+    1.1 MB L1 cache (i.e. I couldn't figure it out)
     
     */
     
@@ -200,7 +202,7 @@ public class CompactMagicBitboard {
             for(long config : blockerSet) {
                 lookupsIndex = transform(config, magic, shift) + lookupsOffsetCounter;
                 attack = createAttack(square, config, true);
-                attacksIndex = indexOfAttack(attack, true);
+                attacksIndex = indexOfAttack(square, attack, true);
 
                 if(attack != attacks[attacksIndex]) {
                     System.out.println("Incorrect attack index returned for rooks; shutting down.");
@@ -224,14 +226,18 @@ public class CompactMagicBitboard {
             for(long config : blockerSet) {
                 lookupsIndex = transform(config, magic, shift) + lookupsOffsetCounter;
                 attack = createAttack(square, config, false);
-                attacksIndex = indexOfAttack(attack, false);
+                attacksIndex = indexOfAttack(square, attack, false);
 
-                if(attack != attacks[attacksIndex]) {
+                if(attacksIndex < 0 || attack != attacks[attacksIndex]) {
                     System.out.println("Incorrect attack index returned for bishops; shutting down.");
                     System.exit(1);
                 }
 
                 lookups[lookupsIndex] = (byte) (attacksIndex - attacksOffsets[square + 64]);
+
+                if(Math.abs(attacksIndex - attacksOffsets[square + 64]) > 255) {
+                    System.out.println("ERROR " + square);
+                }
             }
 
             lookupsOffsetCounter += blockerSet.length;
@@ -281,25 +287,22 @@ public class CompactMagicBitboard {
         return (int) (((config * magic) >>> (shift)) & 0xFFFFFFFFL);
     }
 
-    private static short indexOfAttack(long attack, boolean major) {
-        if(major) {
-            // search rook attacks
-            for(short i = 0; i < 4900; i++) {
-                if(attacks[i] == attack) {
-                    return i;
-                }
+    private static short indexOfAttack(byte square, long attack, boolean major) {
+        /* 
+         * Starts at offset the attacks for a square begin for efficiency and to avoid the corner 
+         * bishop problem where two bishops in opposite corners can have the same attack set 
+         * (inner 6x6 diagonal). To avoid ArrayIndexOutOfBounds we just add 144 to the current value 
+         * since 144 is the max number of attacks associated with any square for rook/bishop. 
+         * If we haven't found it in 144 from the starting point, we have a fatal flaw and the
+         * program will crash. 
+         */ 
+            int majorOffset = major ? 0 : 64;
+        for(short i = attacksOffsets[square + majorOffset]; i < attacksOffsets[square + majorOffset] + 144; i++) {
+            if(attacks[i] == attack) {
+                return i;
             }
-
-            return -1;
-        } else {
-            // search bishop attacks
-            for(short i = 4900; i < attacks.length; i++) {
-                if(attacks[i] == attack) {
-                    return i;
-                }
-            }
-
-            return -1;
         }
+
+        return -1;
     }
 }

@@ -1,16 +1,28 @@
 package helper;
 
 public class FEN {
+    // starting FEN and various testing FENs
+    // NOTE: Exactly 1 king of opposite colors must be on the board in all cases or the program will crash fatally
+
     private static final String[] FEN_STRINGS = {
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // [0] Starting position
         "8/4p3/8/1pppR1p1/4p3/4p3/4p3/8 w - - 0 1", // [1] Rook magic bitboard test 
         "7B/8/8/8/8/8/8/B7 w - - 0 1", // [2] Bishop magic bitboard test
         "2r1B3/1p1p4/p1Q2RpP/n7/8/2B2p2/6P1/7R w - - 0 1", // [3] queen magic bitboard test
         "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ", // [4] Perft Position 2 (https://www.chessprogramming.org/Perft_Results)
-        "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ", // [5] Perft Position 5 (ibid)
-        "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", // [6] Perft Position 6 (ibid)
+        "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - ", // [5] Perft Position 3
+        "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8 ", // [6] Perft Position 5 (ibid)
+        "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", // [7] Perft Position 6 (ibid)
+        "3n1b2/4P3/8/2p5/1p2p3/p7/PPPP1PPP/8 w - - 0 1", // [8] Player pawn promotion
+        "r1bqkbnr/1ppp1ppp/p1n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4", // [9] Ruy Lopez Opening
+        "rnbqkbnr/p3p2p/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // [10] Pawn protection test
+        "k2r3r/1p6/b1p1QN2/1P6/8/8/4K3/R6R w - - 0 1", // [11] King Castling and Pin Test 1
+        "k7/8/8/3P4/4p2R/8/3P4/K6Q w - - 0 1", // [12] Pin Test 2
+        "k7/8/8/8/4p2R/8/3P4/K6Q w - - 0 1", // [13] Pin Test 3
+        "8/7k/8/8/3K1p1r/8/2b1P3/1B6 w - - 0 1", // [14] EP | Pin Test 4
+        "K7/8/6k1/8/5p2/3b4/2B1P3/8 w - - 0 1", // [15] EP | Pin Test 5
     };
-    private static String currentFEN = FEN_STRINGS[6];
+    private static String currentFEN = FEN_STRINGS[15];
 
     public static String getStartingFEN() {
         return FEN_STRINGS[0];
