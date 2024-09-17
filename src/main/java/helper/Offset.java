@@ -11,57 +11,37 @@ public class Offset {
     
     public static int forward(int index) {
         int multiplier = (GameInfo.getTurn().equals("white")) ? 1 : -1;
-        int result = index + (8 * multiplier);
-
-        if(result < 0 || result > 63) {
-            System.out.println("WARNING: \"forward\" square is outside the board in forward() -> Offset.java");
-        }
-
-        return result;
+        return index + (8 * multiplier);
     }
 
     public static int doubleForward(int index) {
         int multiplier = (GameInfo.getTurn().equals("white")) ? 1 : -1;
-        int result = index + (16 * multiplier);
-
-        if(result < 0 || result > 63) {
-            System.out.println("WARNING: \"double forward\" square is outside the board in doubleForward() -> Offset.java");
-        }
-
-        return result;
+        return index + (16 * multiplier);
     }
 
     public static int leftForwardDiagonal(int index) {
         int multiplier = (GameInfo.getTurn().equals("white")) ? 1 : -1;
-        int result = index + (7 * multiplier);
-
-        if(result < 0 || result > 63) {
-            System.out.println("WARNING: \"leftForwardDiagonal\" square is outside the board in leftForwardDiagonal() -> Offset.java");
-        }
-
-        return result;
+        return index + (7 * multiplier);
     }
 
     public static int rightForwardDiagonal(int index) {
-        int multiplier = (GameInfo.getTurn().equals("white")) ? 1 : -1;
-        int result = index + (9 * multiplier);
+        int multiplier = (GameInfo.getOppositeTurn().equals("black")) ? 1 : -1;
+        return index + (9 * multiplier);
+    }
 
-        if(result < 0 || result > 63) {
-            System.out.println("WARNING: \"rightForwardDiagonal\" square is outside the board in rightForwardDiagonal() -> Offset.java");
-        }
+    public static int opponentLeftForwardDiagonal(int index) {
+        int multiplier = (GameInfo.getOppositeTurn().equals("white")) ? 1 : -1;
+        return index + (7 * multiplier);
+    }
 
-        return result;
+    public static int opponentRightForwardDiagonal(int index) {
+        int multiplier = (GameInfo.getOppositeTurn().equals("white")) ? 1 : -1;
+        return index + (9 * multiplier);
     }
 
     public static int behind(int index) {
         int multiplier = (GameInfo.getTurn().equals("white")) ? 1 : -1;
-        int result = index - (8 * multiplier);
-
-        if(result < 0 || result > 63) {
-            System.out.println("WARNING: \"behind\" square is outside the board in behind() -> Offset.java");
-        }
-
-        return result;
+        return index - (8 * multiplier);
     }
 
     public static boolean isFileA(int index) {
@@ -96,7 +76,46 @@ public class Offset {
         }
     }
 
+    public static boolean opponentIsNotRelativeLeftEdge(int index) {
+        if(GameInfo.getOppositeTurn().equals("white")) {
+            return !Bit.isSet(Bitboard.getBitboard("aFile"), index);
+        } else {
+            return !Bit.isSet(Bitboard.getBitboard("hFile"), index);
+        }
+    }
+
+    public static boolean opponentIsNotRelativeRightEdge(int index) {
+        if(GameInfo.getOppositeTurn().equals("white")) {
+            return !Bit.isSet(Bitboard.getBitboard("hFile"), index);
+        } else {
+            return !Bit.isSet(Bitboard.getBitboard("aFile"), index);
+        }
+    }
+
     public static boolean isBorder(int index) {
         return Bit.isSet(Bitboard.getBitboard("border"), index);
+    }
+
+    public static boolean isRelativePromotion(int index) {
+        return Bit.isSet(Bitboard.getBitboard(GameInfo.getTurn() + "Promotion"), index);
+    }
+
+    public static int getSquareRelationship(int square1, int square2) {
+        int rank1 = square1 / 8;
+        int file1 = square1 % 8;
+        int rank2 = square2 / 8;
+        int file2 = square2 % 8;
+
+        if (rank1 == rank2) {
+            return 0; // Same rank
+        } else if (file1 == file2) {
+            return 1; // Same file
+        }else if ((rank1 - file1) == (rank2 - file2)) {
+            return 2; // Same major diagonal
+        }else if ((rank1 + file1) == (rank2 + file2)) {
+            return 3; // Same minor diagonal
+        } else {
+            return -1;
+        }
     }
 }

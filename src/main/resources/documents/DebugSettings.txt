@@ -17,7 +17,7 @@ B6. Print a message if the clicked square holds a home color piece: false
 
 C1. Show bitboard highlights for the clicked piece (in blue): false
 C2. Show bitIndex on the top left corner of each square: true
-C3. Show board lookup nibble on the bottom left corner of each square: false
+C3. Show board lookup nibble as a string on the bottom left corner of each square: true
 C4. Show all legal move highlights for the clicked piece (in pink): true
 
 >> Move Generation
@@ -31,6 +31,10 @@ E1. Timer for initializing bitboards: false
 E2. Placeholder for future setting: false
 E3. Timer for generate legal moves: false
 
+>> Pins and Checks
+
+F1. Print absolutely pinned pieces bitboard if not empty; otherwise print "no absolute pins": true
+
 >> GUI Initialization
 
-F1. Turn off GUI: false
+G1. Turn off GUI: false

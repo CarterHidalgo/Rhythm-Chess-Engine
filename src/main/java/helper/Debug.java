@@ -34,4 +34,8 @@ public class Debug {
     public static boolean on(String settingID) {
         return debugSettings.getOrDefault(settingID, false) && GameInfo.debug();
     }
+
+    public static boolean off(String settingID) {
+        return !debugSettings.getOrDefault(settingID, false) && GameInfo.debug();
+    }
 }

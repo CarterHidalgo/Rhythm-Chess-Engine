@@ -31,15 +31,18 @@ public class BoardLookup {
 
     // only board lookup structures should be updated in this method
     public static void updateWithMove(short move) {
-        setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
-        setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
-
         if(Move.isEnPassant(move)) {
-            setSquare((byte) Offset.behind(Move.getToIndex(move)), Bit.EMPTY);
+            setSquare((byte) Offset.behind(Move.getToIndex(move)), Bit.EMPTY); // update ep square
+            setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
+            setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
         } else if(Move.isCastle(move)) {
-
+            
         } else if(Move.isPromotion(move)) {
-
+            setSquare(Move.getToIndex(move), Move.getPieceFromFlag(move)); // update to square
+            setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
+        } else {
+            setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
+            setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
         }
     }
 
@@ -78,5 +81,21 @@ public class BoardLookup {
         byte value = Bit.getBitRange(board[bitIndex / 2], startIndex, startIndex + 3);
 
         return value;
+    }
+
+    public static boolean isWhite(byte code) {
+        System.out.println(Integer.toBinaryString(code));
+
+        return true;
+    }
+
+    public static boolean isBlack(byte code) {
+        System.out.println(Integer.toBinaryString(code));
+
+        return true;
+    }
+
+    public static void print(int bitIndex) {
+        System.out.println(bitIndex + ": " + getPieceByBitIndex((byte) bitIndex));
     }
 }

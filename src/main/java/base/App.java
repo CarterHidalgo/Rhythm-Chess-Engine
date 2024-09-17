@@ -12,7 +12,7 @@ public class App extends Application {
     public void start(Stage stage) {
         ModelMain.initModel();
 
-        if(!Debug.on("F1")) {
+        if(!Debug.on("G1")) {
             stage.setTitle("Java ChessBot Application");
             stage.setResizable(false);
             stage.setScene(ViewMain.initView());

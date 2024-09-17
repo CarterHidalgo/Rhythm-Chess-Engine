@@ -24,7 +24,7 @@ public class ViewMain {
     }
 
     public static void updateViewMain() {
-        if(GameInfo.getGameState() == "promote") {
+        if(GameInfo.stateIs("pre-promote")) {
             PromotionGraphic.updatePromotionGraphic();
         }
     }
