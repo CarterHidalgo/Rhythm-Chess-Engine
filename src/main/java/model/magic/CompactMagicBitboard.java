@@ -141,6 +141,10 @@ public class CompactMagicBitboard {
         return attacks[attacksOffsets[square + 64] + (lookups[transform(Bitboard.getBitboard("occupied") & MagicBitboardMask.getBishopMask(square), MagicNumbers.BISHOP_MAGICS[square], bishopShift[square]) + lookupsOffsets[square + 64]] & 0xFF)];
     }
 
+    public static long getQueenMoves(int square) {
+        return getRookMoves(square) | getBishopMoves(square);
+    }
+
     private static void initAttacks() {
         short attacksIndex = 0;
         long[] blockerSet;

@@ -35,8 +35,16 @@ public class BoardLookup {
             setSquare((byte) Offset.behind(Move.getToIndex(move)), Bit.EMPTY); // update ep square
             setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update to square
             setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
-        } else if(Move.isCastle(move)) {
-            
+        } else if(Move.isKingCastle(move)) {
+            setSquare((byte) (Move.getFromIndex(move) + 1), getByteCodeByBitIndex((byte) (Move.getFromIndex(move) + 3))); // update rook to square
+            setSquare((byte) (Move.getFromIndex(move) + 3), Bit.EMPTY); // update rook from square
+            setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update king to square
+            setSquare(Move.getFromIndex(move), Bit.EMPTY); // update king from square
+        } else if(Move.isQueenCastle(move)) {
+            setSquare((byte) (Move.getFromIndex(move) - 1), getByteCodeByBitIndex((byte) (Move.getFromIndex(move) - 4))); // update rook to square
+            setSquare((byte) (Move.getFromIndex(move) - 4), Bit.EMPTY); // update rook from square
+            setSquare(Move.getToIndex(move), getByteCodeByBitIndex(Move.getFromIndex(move))); // update king to square
+            setSquare(Move.getFromIndex(move), Bit.EMPTY); // update king from square
         } else if(Move.isPromotion(move)) {
             setSquare(Move.getToIndex(move), Move.getPieceFromFlag(move)); // update to square
             setSquare(Move.getFromIndex(move), Bit.EMPTY); // update from square
@@ -81,18 +89,6 @@ public class BoardLookup {
         byte value = Bit.getBitRange(board[bitIndex / 2], startIndex, startIndex + 3);
 
         return value;
-    }
-
-    public static boolean isWhite(byte code) {
-        System.out.println(Integer.toBinaryString(code));
-
-        return true;
-    }
-
-    public static boolean isBlack(byte code) {
-        System.out.println(Integer.toBinaryString(code));
-
-        return true;
     }
 
     public static void print(int bitIndex) {

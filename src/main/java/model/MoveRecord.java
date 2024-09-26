@@ -30,7 +30,7 @@ public class MoveRecord {
     public static void print() {
         System.out.println("\n >> Move Record");
         for(Short s : moves) {
-            Move.print(s);
+            Move.printIndexed(s);
         }
         System.out.println(" >> ");
     }

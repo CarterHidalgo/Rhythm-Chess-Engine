@@ -46,6 +46,9 @@ public class Bitboard {
         "blackPawnStart",
         "blackPromotion",
 
+        "whiteKingStart",
+        "blackKingStart",
+
         "border",
         "aFile",
         "hFile",
@@ -103,6 +106,14 @@ public class Bitboard {
 
         bitboard.put("blackPawnStart", 0xFF000000000000L);
         bitboard.put("blackPromotion", 0xFFL);
+
+        // bitboard.put("whiteKingStart", 0x10L);
+        // bitboard.put("blackKingStart", 0x1000000000000000L);
+
+        bitboard.put("whiteKingside", 0x60L);
+        bitboard.put("whiteQueenside", 0xeL);
+        bitboard.put("blackKingside", 0x6000000000000000L);
+        bitboard.put("blackQueenside", 0xe00000000000000L);
 
         bitboard.put("border", 0xff818181818181ffL);
         bitboard.put("aFile", 0x101010101010101L);
@@ -245,8 +256,25 @@ public class Bitboard {
 
         if(Move.isKing(move)) {
             KingAttacks.setSelfKingIndex(Move.getToIndex(move));
+            KingAttacks.removeAllCastleRights(GameInfo.getTurn());
         }
 
+        if(Move.isKingCastle(move)) {
+            updateBitboard(GameInfo.getTurn() + "Rook", Move.getFromIndex(move) + 3, Move.getFromIndex(move) + 1); // rook
+            updateBitboard(GameInfo.getTurn(), Move.getFromIndex(move) + 3, Move.getFromIndex(move) + 1); // side
+            updateBitboard("occupied", Move.getFromIndex(move) + 3, Move.getFromIndex(move) + 1); // occupied
+        }
+        
+        if(Move.isQueenCastle(move)) {
+            updateBitboard(GameInfo.getTurn() + "Rook", Move.getFromIndex(move) - 4, Move.getFromIndex(move) - 1); // rook
+            updateBitboard(GameInfo.getTurn(), Move.getFromIndex(move) - 4, Move.getFromIndex(move) - 1); // side
+            updateBitboard("occupied", Move.getFromIndex(move) - 4, Move.getFromIndex(move) - 1); // occupied
+        }
+
+        if(Move.isEnPassant(move)) {
+            addToBitboard("empty", Offset.behind(Move.getToIndex(move)));
+        }
+        
         advanceSelf(move);
         updateNeutrals(move);
     }
@@ -300,6 +328,7 @@ public class Bitboard {
 
         updateBitboard(GameInfo.getTurn(), Move.getFromIndex(move), Move.getToIndex(move)); // add self side
         updateBitboard("occupied", Move.getFromIndex(move), Move.getToIndex(move)); // add occupied
+        updateBitboard("empty", Move.getToIndex(move), Move.getFromIndex(move));
     }
 
     private static void removeOpponent(short move) {
@@ -313,16 +342,7 @@ public class Bitboard {
     }
 
     private static void updateNeutrals(short move) {
-        // update empty bitboard
-        addToBitboard("empty", Move.getFromIndex(move));
-        removeFromBitboard("empty", Move.getToIndex(move));
 
-        if(Move.isEnPassant(move)) {
-            addToBitboard("empty", Offset.behind(Move.getToIndex(move)));
-        }
-        
-        // occupied is the negation of empty
-        bitboard.put("occupied", ~bitboard.get("empty")); 
     }
 
     private static void updateBitboard(String key, int bitIndexToRemove, int bitIndexToAdd) {

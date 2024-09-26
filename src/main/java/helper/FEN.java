@@ -5,7 +5,10 @@ public class FEN {
     // NOTE: Exactly 1 king of opposite colors must be on the board in all cases or the program will crash fatally
 
     private static final String[] FEN_STRINGS = {
+        // Starting Position
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // [0] Starting position
+
+        // Implementation tests
         "8/4p3/8/1pppR1p1/4p3/4p3/4p3/8 w - - 0 1", // [1] Rook magic bitboard test 
         "7B/8/8/8/8/8/8/B7 w - - 0 1", // [2] Bishop magic bitboard test
         "2r1B3/1p1p4/p1Q2RpP/n7/8/2B2p2/6P1/7R w - - 0 1", // [3] queen magic bitboard test
@@ -20,9 +23,21 @@ public class FEN {
         "k7/8/8/3P4/4p2R/8/3P4/K6Q w - - 0 1", // [12] Pin Test 2
         "k7/8/8/8/4p2R/8/3P4/K6Q w - - 0 1", // [13] Pin Test 3
         "8/7k/8/8/3K1p1r/8/2b1P3/1B6 w - - 0 1", // [14] EP | Pin Test 4
-        "K7/8/6k1/8/5p2/3b4/2B1P3/8 w - - 0 1", // [15] EP | Pin Test 5
+        "k7/8/5r2/8/3R4/8/1K6/8 w - - 0 1", // [15] EP | Pin Test 5
+        "8/3q4/5k2/1Rp5/4Pp2/8/3B1N2/K7 w - - 0 1", // [16] King Check (Ray + Pawn) 
+        "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", // [17] Castling
+
+        // Manual Web Perft Checks
+        "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1", // [18] Kiwipete
+        "8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w - - 0 1", // [19] Position 3
+        "r3k2r/Pppp1ppp/1b3nbN/nP6/BBP1P3/q4N2/Pp1P2PP/R2Q1RK1 w kq - 0 1", // [20] Position 4
+        "rnbq1k1r/pp1Pbppp/2p5/8/2B5/8/PPP1NnPP/RNBQK2R w KQ - 1 8", // [21] Position 5
+        "r4rk1/1pp1qppp/p1np1n2/2b1p1B1/2B1P1b1/P1NP1N2/1PP1QPPP/R4RK1 w - - 0 10", // [22] Position 6
+
+        "8/2k1r3/8/8/4K1r1/8/8/8 w - - 0 1", // [23] temp
     };
-    private static String currentFEN = FEN_STRINGS[15];
+
+    private static String currentFEN = FEN_STRINGS[21];
 
     public static String getStartingFEN() {
         return FEN_STRINGS[0];
