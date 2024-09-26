@@ -14,23 +14,31 @@ import model.magic.CompactMagicBitboard;
 
 public class MoveGeneration {
     private static ArrayList<Short> legalMoveList = new ArrayList<>();
-    private static long opponentProtected = 0, opponentPinners = 0, opponentCheckers = 0, pinnedPieces = 0, checkMask = 0;
+    private static long opponentProtected = 0, opponentPinners = 0, opponentCheckers = 0, pinnedPieces = 0, checkMask = 0, kingUnsafe = 0;
     private static int numMoves = 0, captures = 0, ep = 0, castles = 0, promotions = 0, checks = 0, discoveryChecks = 0, doubleChecks = 0, checkmates = 0;
     private static int pawnMoves = 0, knightMoves = 0, bishopMoves = 0, rookMoves = 0, queenMoves = 0, kingMoves = 0;
 
     public static void generateLegalMoves() {
         wipeMoveGeneration();
 
-        // Generates a bitboard of all squares "controlled" by the opponent: opponentProtected
+        // Generates a bitboard of all squares "controlled" by the opponent
+        // Printer.printBitboard(opponentProtected, "prelim");
         generatePawnProtection();
+        // Printer.printBitboard(opponentProtected, "pawns");
         generateKnightProtection();
+        // Printer.printBitboard(opponentProtected, "knights");
         generateBishopProtection();
+        // Printer.printBitboard(opponentProtected, "bishops");
         generateRookProtection();
+        // Printer.printBitboard(opponentProtected, "rooks");
         generateQueenProtection();
+        // Printer.printBitboard(opponentProtected, "queens");
 
         // create move limiters based on pins and checks
         calculatePinnedPieces();
-        calculateChecks();
+        // Printer.printBitboard(opponentProtected, "pin");
+        calculateCheckMask();
+        // Printer.printBitboard(opponentProtected, "checks");
 
         if(Debug.on("E3")) {
             Timer.start("generateLegalMoves", "nano");
@@ -63,22 +71,27 @@ public class MoveGeneration {
             System.out.println(" " + rookMoves + " rook");
             System.out.println(" " + queenMoves + " queen");
             System.out.println(" " + kingMoves + " king");
-            System.out.println("----------------------");
-            System.out.println(captures + " captures");
-            System.out.println(ep + " " + "ep");
-            System.out.println(castles + " castles");
-            System.out.println(promotions + " promotions");
-            System.out.println(checks + " checks");
-            System.out.println(discoveryChecks + " discoveryChecks");
-            System.out.println(doubleChecks + " doubleChecks");
-            System.out.println(checkmates + " checkmates");
+            // System.out.println("----------------------");
+            // System.out.println(captures + " captures");
+            // System.out.println(ep + " " + "ep");
+            // System.out.println(castles + " castles");
+            // System.out.println(promotions + " promotions");
+            // System.out.println(checks + " checks");
+            // System.out.println(discoveryChecks + " discoveryChecks");
+            // System.out.println(doubleChecks + " doubleChecks");
+            // System.out.println(checkmates + " checkmates");
         }
         
         if(Debug.on("D2")) {
             System.out.println();
             for(short move : legalMoveList) {
-                Move.print(move);
+                Move.printIndexed(move);
             }
+        }
+        
+        if(Debug.on("D3")) {
+            System.out.println();
+            Move.printAlgebraic(legalMoveList);
         }
     }
     
@@ -207,7 +220,6 @@ public class MoveGeneration {
                 }
 
                 if(Bit.isSet(Bitboard.getBitboard("ep"), leftForwardDiagonal)) {
-                    System.out.println("left ep");
                     // left diagonal ep capture
                     legalMoveList.add(Move.createMove((byte) fromIndex, (byte) leftForwardDiagonal, Bit.EP_CAPTURE));
                     
@@ -275,7 +287,7 @@ public class MoveGeneration {
                 toSquareBitboard &= pinMask;
             }
 
-            if(KingAttacks.isInCheck(GameInfo.getSide())) {
+            if(KingAttacks.isInCheck(GameInfo.getTurn())) {
                 toSquareBitboard &= checkMask;
             }
     
@@ -358,7 +370,7 @@ public class MoveGeneration {
                 toSquareBitboard &= pinMask;
             }
 
-            if(KingAttacks.isInCheck(GameInfo.getSide())) {
+            if(KingAttacks.isInCheck(GameInfo.getTurn())) {
                 toSquareBitboard &= checkMask;
             }
 
@@ -390,7 +402,7 @@ public class MoveGeneration {
             int fromIndex = Bit.getNextBitIndex(selfBitboard);
             byte flags;
 
-            toSquareBitboard = CompactMagicBitboard.getRookMoves(fromIndex) | CompactMagicBitboard.getBishopMoves(fromIndex);
+            toSquareBitboard = CompactMagicBitboard.getQueenMoves(fromIndex);
             toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn());
 
             if(Bit.isSet(pinnedPieces, fromIndex)) {
@@ -398,7 +410,7 @@ public class MoveGeneration {
                 toSquareBitboard &= pinMask;
             }
 
-            if(KingAttacks.isInCheck(GameInfo.getSide())) {
+            if(KingAttacks.isInCheck(GameInfo.getTurn())) {
                 toSquareBitboard &= checkMask;
             }
 
@@ -425,15 +437,15 @@ public class MoveGeneration {
 
     private static void generateLegalKingMoves() {
         long toSquareBitboard;
-
-        long selfBitboard = Bitboard.getBitboard(GameInfo.getTurn() + "King");
-        int fromIndex = Bit.getNextBitIndex(selfBitboard); 
+        int fromIndex = KingAttacks.getSelfKingIndex();
         byte flags;
 
         toSquareBitboard = KingAttacks.getKingAttacks(fromIndex);
-        toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn()); 
+        toSquareBitboard &= ~Bitboard.getBitboard(GameInfo.getTurn());
         toSquareBitboard &= ~opponentProtected;
+        toSquareBitboard &= ~kingUnsafe;
 
+        // normal 8 "ring" moves
         while(Bit.hasNextBit(toSquareBitboard)) {
             int toIndex = Bit.getNextBitIndex(toSquareBitboard);
 
@@ -450,6 +462,22 @@ public class MoveGeneration {
 
             toSquareBitboard = Bit.clearBit(toSquareBitboard, toIndex);
         }
+
+        // kingside castle
+        if(canCastleKingside()) {
+            flags = Bit.KING_CASTLE;
+            legalMoveList.add(Move.createMove((byte) fromIndex, (byte) (fromIndex + 2), flags));
+            numMoves++;
+            kingMoves++;
+        }
+            
+        // queenside castle
+        if(canCastleQueenside()) {
+            flags = Bit.QUEEN_CASTLE;
+            legalMoveList.add(Move.createMove((byte) fromIndex, (byte) (fromIndex - 2), flags));
+            numMoves++;
+            kingMoves++;
+        }
     }
 
     private static void generatePawnProtection() {
@@ -460,7 +488,7 @@ public class MoveGeneration {
             fromIndex = Long.numberOfTrailingZeros(opponentBitboard);
             leftForwardDiagonal = Offset.opponentLeftForwardDiagonal(fromIndex);
             rightForwardDiagonal = Offset.opponentRightForwardDiagonal(fromIndex);
-
+            
             if(Offset.opponentIsNotRelativeLeftEdge(fromIndex)) {
                 opponentProtected = Bit.setBit(opponentProtected, leftForwardDiagonal);
             }
@@ -545,7 +573,7 @@ public class MoveGeneration {
         while(Bit.hasNextBit(opponentBitboard)) {
             int fromIndex = Bit.getNextBitIndex(opponentBitboard); 
             
-            toSquareBitboard = CompactMagicBitboard.getRookMoves(fromIndex) | CompactMagicBitboard.getBishopMoves(fromIndex);
+            toSquareBitboard = CompactMagicBitboard.getQueenMoves(fromIndex);
             opponentProtected |= toSquareBitboard;
 
             if(Bit.isSet(toSquareBitboard, KingAttacks.getSelfKingIndex())) {
@@ -602,6 +630,7 @@ public class MoveGeneration {
         pinnedPieces = 0;
         long superKing;
         
+        // calculate super king with ep-handling
         if(Bitboard.getBitboard("ep") != 0) {
             int epPawnIndex = Offset.behind(Bit.getNextBitIndex(Bitboard.getBitboard("ep")));
             
@@ -609,23 +638,47 @@ public class MoveGeneration {
             Bitboard.hide("occupied", epPawnIndex);
             
             // calculate super king with "x-ray" vision through the ep pawn (still stops at all non-ep pawn blockers)
-            superKing = CompactMagicBitboard.getRookMoves(KingAttacks.getSelfKingIndex()) | CompactMagicBitboard.getBishopMoves(KingAttacks.getSelfKingIndex());
+            superKing = CompactMagicBitboard.getQueenMoves(KingAttacks.getSelfKingIndex());
             
             // put ep pawn back
             Bitboard.restore("occupied", epPawnIndex);
         } else {
-            superKing = CompactMagicBitboard.getRookMoves(KingAttacks.getSelfKingIndex()) | CompactMagicBitboard.getBishopMoves(KingAttacks.getSelfKingIndex());
+            superKing = CompactMagicBitboard.getQueenMoves(KingAttacks.getSelfKingIndex());
         }
 
         while(Bit.hasNextBit(opponentPinners)) {
             int index = Bit.getNextBitIndex(opponentPinners);
 
+            long superPinner;
             long pinLine = Bitboard.getLineMask(index, KingAttacks.getSelfKingIndex());
-            long superPinner = CompactMagicBitboard.getRookMoves(index) | CompactMagicBitboard.getBishopMoves(index);
 
-            pinnedPieces |= (superKing & pinLine & superPinner & Bitboard.getBitboard(GameInfo.getTurn()));
+            if(BoardLookup.getPieceByBitIndex((byte) index).equals(GameInfo.getOpponent() + "Rook")) {
+                superPinner = CompactMagicBitboard.getRookMoves(index);
+            } else if(BoardLookup.getPieceByBitIndex((byte) index).equals(GameInfo.getOpponent() + "Bishop")) {
+                superPinner = CompactMagicBitboard.getBishopMoves(index);
+            } else {
+                superPinner = CompactMagicBitboard.getQueenMoves(index);
+            }
 
-            System.out.println();
+            long pinResult = (superKing & pinLine & superPinner & Bitboard.getBitboard(GameInfo.getTurn()));
+
+            // check to make sure we aren't over-pinning in the case of ep
+            if(Bitboard.getBitboard("ep") != 0) {
+                if(Long.bitCount(pinResult) > 1) {
+                    System.out.println("WARNING: Multiple pinned pieces when only 1 should exist. See calculatePinnedPieces() -> MoveGeneration.java; Shutting down");
+                    System.exit(1);
+                }
+                
+                int pinnedIndex = Bit.getNextBitIndex(pinResult);
+                int epPawnIndex = Offset.behind(Bit.getNextBitIndex(Bitboard.getBitboard("ep")));
+
+                if(Bit.isSet(pinLine, epPawnIndex) && !BoardLookup.getPieceByBitIndex((byte) pinnedIndex).equals(GameInfo.getTurn() + "Pawn")) {
+                    pinResult = Bit.clearBit(pinResult, pinnedIndex);
+                }
+
+            }
+
+            pinnedPieces |= pinResult;
 
             opponentPinners = Bit.clearBit(opponentPinners, index);
         }
@@ -641,26 +694,34 @@ public class MoveGeneration {
         }
     }
 
-    private static void calculateChecks() {
+    private static void calculateCheckMask() {
         if(opponentCheckers != 0) {
             KingAttacks.setCheck(GameInfo.getTurn());
 
             // initially all bits are 1; we then eliminate some every iteration of the while loop with & operations
             checkMask = -1L;
+            kingUnsafe = opponentProtected;
+
+            Printer.printBitboard(kingUnsafe, "kingUnsafe-pre");
 
             while(Bit.hasNextBit(opponentCheckers)) {
                 int index = Bit.getNextBitIndex(opponentCheckers);
                 long checkLine = Bitboard.getLineMask(index, KingAttacks.getSelfKingIndex());
-
+                
                 if(checkLine != 0) {
                     // pawn, bishop, rook, queen check
-                    long superChecker = CompactMagicBitboard.getRookMoves(index) | CompactMagicBitboard.getBishopMoves(index) | (1L << index);
-                    long superKing = CompactMagicBitboard.getRookMoves(KingAttacks.getSelfKingIndex()) | CompactMagicBitboard.getBishopMoves(KingAttacks.getSelfKingIndex());
-                    // Printer.printBitboard(superKing, "supKing");
+                    long superChecker = CompactMagicBitboard.getQueenMoves(index) | (1L << index);
+                    long superKing = CompactMagicBitboard.getQueenMoves(KingAttacks.getSelfKingIndex());
+
                     checkMask &= (checkLine & superKing & superChecker);
 
-                    if(checkMask == 0) {
-                        break;
+                    // ray pieces can make squares through the king "unsafe" even if those squares are not "protected"
+                    if(!BoardLookup.getPieceByBitIndex((byte) index).equals(GameInfo.getOpponent() + "Pawn")) {
+                        Bitboard.hide("occupied", KingAttacks.getSelfKingIndex());
+                        kingUnsafe |= (CompactMagicBitboard.getQueenMoves(index) & KingAttacks.getKingAttacks(KingAttacks.getSelfKingIndex()) & checkLine);
+                        Bitboard.restore("occupied", KingAttacks.getSelfKingIndex());
+
+                        Printer.printBitboard(kingUnsafe, "kingUnsafe");
                     }
                 } else {
                     /*
@@ -679,7 +740,31 @@ public class MoveGeneration {
 
                 opponentCheckers = Bit.clearBit(opponentCheckers, index);
             }
+
+            Printer.printBitboard(kingUnsafe, "kingUnsafe-post");
         }
+    }
+
+    private static boolean canCastleKingside() {
+        int offset = KingAttacks.getSelfKingIndex() + 3;
+
+        return  (offset > 63) ? false : 
+                KingAttacks.hasCastleRights(GameInfo.getTurn(), 0) && // has kingside castling rights (king has not moved)
+                !KingAttacks.isInCheck(GameInfo.getTurn()) && // king is not in check
+                BoardLookup.getPieceByBitIndex((byte) offset).equals(GameInfo.getTurn() + "Rook") && // self rook is in corner
+                (Bitboard.getBitboard(GameInfo.getTurn() + "Kingside") & opponentProtected) == 0 && // castling squares are not in check
+                (Bitboard.getBitboard(GameInfo.getTurn() + "Kingside") & Bitboard.getBitboard("occupied")) == 0; // castling squares are not occupied
+    }
+
+    private static boolean canCastleQueenside() {
+        int offset = KingAttacks.getSelfKingIndex() - 4;
+
+        return  (offset < 0) ? false :
+                KingAttacks.hasCastleRights(GameInfo.getTurn(), 1) && // has queenside castling rights (king has not moved)
+                !KingAttacks.isInCheck(GameInfo.getTurn()) && // king is not in check
+                BoardLookup.getPieceByBitIndex((byte) offset).equals(GameInfo.getTurn() + "Rook") && // self rook is in corner
+                (Bitboard.getBitboard(GameInfo.getTurn() + "Queenside") & opponentProtected) == 0 && // castling squares are not in check
+                (Bitboard.getBitboard(GameInfo.getTurn() + "Queenside") & Bitboard.getBitboard("occupied")) == 0; // castling squares are not occupied
     }
 
     private static void wipeMoveGeneration() {
@@ -707,5 +792,6 @@ public class MoveGeneration {
         opponentPinners = 0;
         pinnedPieces = 0;
         checkMask = 0;
+        kingUnsafe = 0;
     }
 }

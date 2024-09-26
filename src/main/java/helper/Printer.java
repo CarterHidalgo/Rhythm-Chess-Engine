@@ -44,6 +44,10 @@ public class Printer {
         }
     }
 
+    public static void printBitboard(String key) {
+        printBitboard(key, key);
+    }
+
     public static void printBitboardAsLine(long bitboard, String description) {
         System.out.println(description);
 

@@ -11,7 +11,16 @@ public class KingAttacks {
         Bit.getNextBitIndex(Bitboard.getBitboard("whiteKing")), 
         Bit.getNextBitIndex(Bitboard.getBitboard("blackKing"))
     );
-    private static Vec2 kingCheck = new Vec2(0, 0);
+    private static boolean[] kingCheck = {false, false};
+
+    /* Castling rights variable schematic
+     *
+     *          short (kingside)    long (queenside)
+     * white    true                true
+     * black    true                true
+     * 
+    */ 
+    private static boolean[][] castleRights = {{true, true}, {true, true}};
 
     private static final long[] KING_ATTACKS = {
         0x302L, // 0
@@ -119,28 +128,54 @@ public class KingAttacks {
 
     public static void printKingCheck() {
         System.out.println("\nturn: " + GameInfo.getTurn());
-        System.out.println("white: " + ((kingCheck.getXAsInt() == 0) ? "no check" : "check"));
-        System.out.println("black: " + ((kingCheck.getYAsInt() == 0) ? "no check" : "check"));
+        System.out.println("white: " + kingCheck[0]);
+        System.out.println("black: " + kingCheck[1]);
     }
 
     public static void setCheck(String side) {
         if(side.equals("white")) {
-            kingCheck.setX(1);
+            kingCheck[0] = true;
         } else {
-            kingCheck.setY(1);
+            kingCheck[1] = true;
         }
     }
 
     public static void clearCheck(String side) {
         if(side.equals("white")) {
-            kingCheck.setX(0);
+            kingCheck[0] = false;
         } else {
-            kingCheck.setY(0);
+            kingCheck[1] = false;
         }
     }
 
     public static boolean isInCheck(String side) {
-        return (side.equals("white")) ? ((kingCheck.getXAsInt() == 1) ? true : false) : ((kingCheck.getYAsInt() == 1) ? true : false);
+        return (side.equals("white") ? kingCheck[0] : kingCheck[1]);
+    }
+
+    public static void removeCastleRights(String side, int dist) {
+        if(side.equals("white")) {
+            castleRights[0][dist] = false;
+        } else {
+            castleRights[1][dist] = false;
+        }
+    }
+
+    public static void removeAllCastleRights(String side) {
+        if(side.equals("white")) {
+            castleRights[0][0] = false;
+            castleRights[0][1] = false;
+        } else {
+            castleRights[1][0] = false;
+            castleRights[1][1] = false;
+        }
+    }
+
+    public static boolean hasCastleRights(String side, int dist) {
+        if(side.equals("white")) {
+            return castleRights[0][dist];
+        } else {
+            return castleRights[1][dist];
+        }
     }
 
     public static void generateKingAttacks() {

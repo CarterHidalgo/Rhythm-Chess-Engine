@@ -1,5 +1,9 @@
 package model;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import helper.Bit;
 import helper.Printer;
 import view.board.BoardOverlayGraphic;
@@ -132,17 +136,21 @@ public class Move {
         return Bit.getBitRange(move, 12, 15) == Bit.DOUBLE_PAWN;
     }
 
-    public static boolean isCastle(short move) {
-        return false;
+    public static boolean isKingCastle(short move) {
+        return Bit.getBitRange(move, 12, 15) == Bit.KING_CASTLE;
     }
+
+    public static boolean isQueenCastle(short move) {
+        return Bit.getBitRange(move, 12, 15) == Bit.QUEEN_CASTLE;
+    }
+
+    // public static boolean isCastle(short move) {
+    //     return isKingCastle(move) || isQueenCastle(move);
+    // }
 
     public static boolean isQuiet(short move) {
         return Bit.getBitRange(move, 12, 15) == Bit.QUIET;
     }
-
-    // public static boolean isAttack(short move) {
-    //     return true;
-    // }
 
     public static boolean isKing(short move) {
         return Bit.isSet(Bitboard.getBitboard(GameInfo.getTurn() + "King"), getFromIndex(move));
@@ -201,11 +209,39 @@ public class Move {
         }
     }
 
-    public static void print(short move) {
+    public static void printIndexed(short move) {
         byte fromIndex = (byte) (move & 0b111111); 
         byte toIndex = (byte) ((move >> 6) & 0b111111);
         byte flags = (byte) ((move >> 12) & 0b1111);
         
         System.out.println(fromIndex + " | " + toIndex + " | " + Bit.flagsToString(flags));
+    }
+
+    public static void printAlgebraic(ArrayList<Short> legalMoveList) {
+        ArrayList<String> moves = new ArrayList<>();
+
+        for(Short move : legalMoveList) {
+            moves.add(getAlgebraic(move));
+        }
+
+        Collections.sort(moves);
+
+        for (String move : moves) {
+            System.out.println(move);
+        }
+    }
+
+    private static String getAlgebraic(short move) {
+        byte fromIndex = (byte) (move & 0b111111); 
+        byte toIndex = (byte) ((move >> 6) & 0b111111);
+        // byte flags = (byte) ((move >> 12) & 0b1111);
+
+        return indexToAlgebraic(fromIndex) + indexToAlgebraic(toIndex);
+    }
+
+    public static String indexToAlgebraic(int index) {
+        char file = (char) ('a' + (index % 8));
+        int rank = 1 + (index / 8);
+        return "" + file + rank;
     }
 }
